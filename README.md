@@ -46,6 +46,6 @@ files, and some have actual documentation:
 - [statiegeld\_tokens](plugins/statiegeld_tokens.pod)
 - [vat](plugins/vat.pod)
 
-> Note: internal links between POD files are all broken in GitHub's rendering,
-> because GitHub wrongly assumes that every Perl package lives on CPAN.
+> Note: Codeberg doesn't render POD. For now, the best way to read the
+> documentation is to use the `perldoc` utility on a local .pod file.
 
