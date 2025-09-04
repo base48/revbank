@@ -14,10 +14,32 @@ The standard deprecation cycle is 2 years. **It is recommended that you upgrade
 RevBank at least once a year.**
 
 While you're at it, upgrade the rest of your system too. RevBank currently
-supports Perl versions down to 5.32 (2020), which is in Debian 11 "bullseye"
-(oldstable). Once Debian 13 "trixie" is released as stable (expected in 2025)
-and 12 "bookworm" becomes the new oldstable, RevBank will begin to require Perl
-5.36 (2022).
+supports Perl versions down to 5.36 (2022), which is in Debian 12 "bookworm"
+(oldstable). Once Debian 14 "forkie" is released as stable (expected in 2027)
+and 13 "trixie" becomes the new oldstable, RevBank will begin to require Perl
+5.40 (2024).
+
+# (2025-09-04) RevBank 10.6.1
+
+Minimum Perl version bumped to 5.36 (the version in Debian oldstable).
+
+Plugins now run under `use v5.36;` if they don't specify a different version of
+Perl. With modern Perl code this shouldn't break anything, but if a custom
+plugin can no longer be loaded, these are some probably causes:
+
+- Indirect object method syntax is now disabled. That means the
+  looks-like-other-languages syntax `new ExampleClass(...)` no longer works.
+  Rewrite as `ExampleClass->new(...)`.
+
+- Smart match is now disabled. That means the keywords `given` and `when` are
+  no longer available. Rewrite as normal `if/elsif/else` blocks.
+
+- Fake multidimensional arrays are now disabled. That means that the weird
+  `$foo{$i, $j}` syntax no longer works. Rewrite as `$foo[$i][$j]`, which uses
+  nested arrays.
+
+Additionally, the plugin `deprecated_raw` has been removed from the repository.
+If you were still using that, remove it from `~/revbank/plugins`.
 
 # (2025-05-06) RevBank 10.2.0, 10.3.0
 

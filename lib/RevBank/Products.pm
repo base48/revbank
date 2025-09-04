@@ -1,8 +1,5 @@
 package RevBank::Products;
-
-use v5.32;
-use warnings;
-use experimental 'signatures';  # stable since 5.36
+use v5.36;
 
 use RevBank::Prompt;
 use RevBank::Global;

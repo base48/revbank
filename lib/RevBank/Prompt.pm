@@ -1,9 +1,5 @@
 package RevBank::Prompt;
-
-use v5.32;
-use warnings;
-use feature qw(signatures isa);
-no warnings "experimental::signatures";
+use v5.36;
 
 use List::Util qw(uniq);
 use Term::ReadLine;

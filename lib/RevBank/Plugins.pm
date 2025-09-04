@@ -1,8 +1,5 @@
 package RevBank::Plugins;
-
-use v5.32;
-use warnings;
-use experimental 'signatures';  # stable since v5.36
+use v5.36;
 
 use FindBin qw($RealBin);
 
@@ -85,9 +82,7 @@ sub load() {
         RevBank::Eval::clean_eval(qq[
             use strict;
             use warnings;
-            use v5.32;
-            use experimental 'signatures';
-            use experimental 'isa';
+            use v5.36;
             package $package;
             BEGIN { RevBank::Global->import; }
             our \@ISA = qw(RevBank::Plugin);

@@ -1,8 +1,5 @@
 package RevBank::FileIO;
-
-use v5.32;
-use warnings;
-use experimental 'signatures';  # stable since v5.36
+use v5.36;
 
 use autodie;
 use Fcntl qw(:flock);

@@ -1,4 +1,4 @@
-use v5.32;
+use v5.36;
 
 # NOTE: While it is possible to install RevBank with `make install` after
 # running this file, as is customary with Perl software, THIS IS NOT NECESSARY.

@@ -1,8 +1,5 @@
 package RevBank::Global;
-
-use v5.32;
-use warnings;
-use experimental 'signatures';  # stable since v5.36
+use v5.36;
 
 use POSIX qw(strftime);
 use RevBank::Amount;
