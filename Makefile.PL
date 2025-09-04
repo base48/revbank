@@ -20,11 +20,11 @@ WriteMakefile(
         resources => {
             repository => {
                 type => 'git',
-                url  => 'https://github.com/revspace/revbank.git',
-                web  => 'https://github.com/revspace/revbank',
+                url  => 'https://codeberg.org/revspace/revbank.git',
+                web  => 'https://codeberg.org/revspace/revbank',
             },
             bugtracker => {
-                web => 'https://github.com/revspace/revbank/issues'
+                web => 'https://codeberg.org/revspace/revbank/issues'
             },
         },
     },

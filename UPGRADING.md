@@ -368,7 +368,8 @@ currently do nothing.
 "8711327538481" "0.80" "Ola Liuk" "#ah=wi162664" "#q=8"
 ```
 
-See https://github.com/bitlair/revbank-inflatinator/ for a possible use of adding metadata.
+See https://git.bitlair.nl/bitlair/revbank-inflatinator for a possible use of
+adding metadata.
 
 # (2023-12-26) RevBank 5.0.0
 

@@ -28,7 +28,7 @@ Generic: cpan LWP::UserAgent JSON
 2. Clone the repository
 
 ```sh
-git clone https://github.com/revspace/revbank.git
+git clone https://codeberg.org/revspace/revbank.git
 cd revbank
 ```
 
