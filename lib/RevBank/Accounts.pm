@@ -1,8 +1,5 @@
 package RevBank::Accounts;
-
-use v5.32;
-use warnings;
-use experimental 'signatures';  # stable since v5.36
+use v5.36;
 
 use RevBank::Global;
 use RevBank::Plugins;
@@ -56,6 +53,14 @@ sub _read() {
     return \%accounts;
 }
 
+sub is_hidden($account) {
+    return $account =~ /^[-+]/;
+}
+
+sub is_special($account) {
+    return $account =~ /^[-+*]/;
+}
+
 sub names() {
     # uniq because *foo causes population of keys '*foo' and 'foo', with
     # ->[0] both being 'foo'. However, the keys are lowercase, not canonical.
@@ -81,7 +86,7 @@ sub create($account) {
 }
 
 sub delete($account) {
-    croak "Deleting special account not supported" if RevBank::Accounts::is_special $account;
+    croak "Deleting special account not supported" if is_special $account;
     $account = assert_account($account);
 
     with_lock {
@@ -136,14 +141,6 @@ sub update($account, $delta, $transaction_id) {
     RevBank::Plugins::call_hooks(
         "account_balance", $account, $old, $delta, $new, $transaction_id
     );
-}
-
-sub is_hidden($account) {
-    return $account =~ /^[-+]/;
-}
-
-sub is_special($account) {
-    return $account =~ /^[-+*]/;
 }
 
 sub parse_user($username, $allow_invalid = 0) {

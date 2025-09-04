@@ -1,6 +1,4 @@
-use v5.32;
-use warnings;
-use experimental qw(signatures);
+use v5.36;
 
 use Test2::V0;
 no warnings qw(experimental);

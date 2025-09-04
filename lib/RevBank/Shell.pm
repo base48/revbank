@@ -1,9 +1,5 @@
 package RevBank::Shell;
-
-use v5.32;
-use warnings;
-use experimental 'isa';         # stable since v5.36
-use experimental 'signatures';  # stable since v5.36
+use v5.36;
 
 use Carp qw(croak);
 use List::Util qw(uniq);

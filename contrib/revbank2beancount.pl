@@ -47,8 +47,7 @@ affect 5% of Earth's human population.
 
 =cut
 
-use v5.32;
-use warnings;
+use v5.36;
 use autodie;
 
 use FindBin qw($RealBin);

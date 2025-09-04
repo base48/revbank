@@ -1,8 +1,5 @@
 #!/usr/bin/env perl
-
-use v5.32;
-use warnings;
-use experimental 'signatures';  # stable since v5.36
+use v5.36;
 
 use POSIX qw(ttyname);
 use Getopt::Long qw(GetOptions :config posix_default no_ignore_case auto_help);
@@ -14,7 +11,7 @@ use RevBank::FileIO ();
 use RevBank::Plugins ();
 use RevBank::Shell qw(abort);
 
-our $VERSION = "10.6.0";
+our $VERSION = "10.6.1";
 $| = 1;
 
 GetOptions(

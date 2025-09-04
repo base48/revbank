@@ -1,6 +1,5 @@
 #!/usr/bin/perl
-use v5.32;
-use warnings;
+use v5.36;
 use autodie;
 use POSIX qw(strftime);
 

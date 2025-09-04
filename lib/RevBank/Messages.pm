@@ -1,8 +1,5 @@
 package RevBank::Messages;
-
-use v5.32;
-use warnings;
-use experimental 'signatures';  # stable since v5.36
+use v5.36;
 
 use RevBank::Global;
 use base 'RevBank::Plugin';
