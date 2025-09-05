@@ -192,6 +192,7 @@ sub as_loggable($self) {
 sub account($self, $new = undef) {
     if (defined $new) {
         croak "User can only be set once" if defined $self->{account};
+        $new = RevBank::Accounts::assert_account($new);
 
         $self->{account} = $new;
         $self->{user} = $new;  # backwards compatibility until 2027-05-01
