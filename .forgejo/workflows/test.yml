@@ -1,0 +1,18 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: codeberg-tiny
+    container:
+      image: node:trixie
+    steps:
+      - uses: actions/checkout@v4
+      - run: |-
+          apt update
+          apt install -y perl libreadline-dev libterm-readline-gnu-perl libcurses-ui-perl libtest2-suite-perl
+      - run: perl -V
+      - run: prove -lv t
