@@ -3,6 +3,7 @@
 HELP "dinnerbonus" => "Add fee for cooking supplies";
 
 our $bonus = 1.00;
+our $target = "kookpotje";
 
 sub command :Tab(kookbonus,dinnerbonus) ($self, $cart, $command, @) {
     my @users = map $_->{account}, map $_->contras, $cart->entries('is_take');
@@ -14,9 +15,6 @@ sub command :Tab(kookbonus,dinnerbonus) ($self, $cart, $command, @) {
 
     @users or return REJECT, "$command requires a pending 'take'.";
     my $users = join '/', @users;
-
-    my $target = parse_user("kookpotje")
-        or return ABORT, "User 'kookpotje' does not exist";
 
     my $entry = $cart->add(0, "Kookbonus");
 
