@@ -26,8 +26,10 @@ open, so it's safe to kill when idle.
 End-user documentation is provided through the `help` command, which has been
 proven to suffice.
 
-For administrators, the **RevBank administrator guide** at
-[https://revbank.nl/docs/](https://revbank.nl/docs/) is provided to describe
-the inner workings in more detail. The documents are also available in the
-source repository as `.md` and `.pod` files. The POD files can be read with
-`perldoc` in a terminal.
+For administrators, the **RevBank administrator guide** is provided to describe
+the inner workings in more detail.
+
+→ [https://revbank.nl/docs/](https://revbank.nl/docs/)
+
+The documents are also available in the source repository as `.md` and `.pod`
+files. The POD files can be read with `perldoc` in a terminal.
