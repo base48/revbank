@@ -60,20 +60,20 @@ left.
 
 Calling this function directly is discouraged. Use C<with_lock> instead.
 
-=head1 slurp($filename)
+=head3 slurp($filename)
 
 Returns the entire contents of the file. In list context, returns a list of
 lines (including the line ending).
 
-=head1 spurt($filename, @data)
+=head3 spurt($filename, @data)
 
-=head1 append($filename, @data)
+=head3 append($filename, @data)
 
 Writes to a file. No separators or delimiters are added to the provided data,
 so in general you will want to pass either the entire contents as a single
 string, or a list of lines that already have line endings.
 
-=head1 rewrite($filename, sub($line) { ...; return $line; })
+=head3 rewrite($filename, sub($line) { ...; return $line; })
 
 Rewrites the existing text file. The provided subroutine is called for each
 line, and must return everything that should be written back. The sub can
