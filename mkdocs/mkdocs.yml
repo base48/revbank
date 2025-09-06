@@ -1,0 +1,32 @@
+site_name: RevBank administrator guide
+theme:
+    name: readthedocs
+    hljs_languages: perl
+    navigation_depth: 4
+    collapse_navigation: False
+repo_url: https://codeberg.org/revspace/revbank
+nav:
+    - Home: README.md
+    - Sysadmin:
+        - Installing: INSTALLING.md
+        - Upgrading: UPGRADING.md
+        - Running: revbank.md
+    - Modules:
+        - RevBank: lib/RevBank.md
+        - RevBank::Accounts: lib/RevBank/Accounts.md
+        - RevBank::Amount: lib/RevBank/Amount.md
+        - RevBank::FileIO: lib/RevBank/FileIO.md
+        - RevBank::Global: lib/RevBank/Global.md
+        - RevBank::Plugins: lib/RevBank/Plugins.md
+        - RevBank::Products: lib/RevBank/Products.md
+        - RevBank::TextEditor: lib/RevBank/TextEditor.md
+    - Plugins:
+        - statiegeld: plugins/statiegeld.md
+        - statiegeld_tokens: plugins/statiegeld_tokens.md
+        - products: plugins/products.md
+        - vat: plugins/vat.md
+    - Sites:
+        - revbank.nl: https://revbank.nl/
+        - RevBank on the RevSpace wiki: https://revspace.nl/RevBank
+markdown_extensions:
+    - toc

@@ -23,29 +23,11 @@ open, so it's safe to kill when idle.
 
 ## Documentation
 
-End-user documentation is provided through the `help` command. For RevSpace
-visitors, some additional end-user documentation is available in Dutch at
-https://revspace.nl/RevBank.
+End-user documentation is provided through the `help` command, which has been
+proven to suffice.
 
-RevBank can be used without RTFM, but some documentation is provided to
-describe the inner workings in more detail:
-
-- [RevBank](lib/RevBank.pod) - technical overview
-- [RevBank::Accounts](lib/RevBank/Accounts.pod) - user accounts and special accounts
-- [RevBank::Amount](lib/RevBank/Amount.pod) - fixed decimal numbers
-- [RevBank::FileIO](lib/RevBank/FileIO.pod) - reading and writing files
-- [RevBank::Global](lib/RevBank/Global.pod) - constants and utility functions
-- [RevBank::Plugins](lib/RevBank/Plugins.pod) - writing plugins
-- [RevBank::Products](lib/RevBank/Products.pod) - revbank.products file format
-- [RevBank::TextEditor](lib/RevBank/TextEditor.pod) - internal pager and editor
-
-The plugins are mostly undocumented, but some have useful hints in the source
-files, and some have actual documentation:
-
-- [statiegeld](plugins/statiegeld.pod)
-- [statiegeld\_tokens](plugins/statiegeld_tokens.pod)
-- [vat](plugins/vat.pod)
-
-> Note: Codeberg doesn't render POD. For now, the best way to read the
-> documentation is to use the `perldoc` utility on a local .pod file.
-
+For administrators, the **RevBank administrator guide** at
+[https://revbank.nl/docs/](https://revbank.nl/docs/) is provided to describe
+the inner workings in more detail. The documents are also available in the
+source repository as `.md` and `.pod` files. The POD files can be read with
+`perldoc` in a terminal.
