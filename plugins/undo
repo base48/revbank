@@ -38,7 +38,7 @@ sub command :Tab(undo) ($self, $cart, $command, @) {
 
 sub tab { @TAB }
 
-our $doing_undo = 0;  # Ugly but works, just like the rest of this plugin
+our $skip_undo_log = 0;  # Ugly but works, just like the rest of this plugin
 
 sub undo :Tab(&tab) ($self, $cart, $tid, @) {
     my $description = "Undo $tid";
@@ -51,7 +51,7 @@ sub undo :Tab(&tab) ($self, $cart, $tid, @) {
             if ($line =~ /^\Q$tid\E\s/) {
                 my (undef, $account, $delta) = split " ", $line;
 
-                $entry ||= $cart->add(0, $description, { undo_transaction_id => $tid });
+                $entry ||= $cart->add(0, $description, { undo_transaction_id => $tid, skip_undo_log => 1 });
 
                 $entry->add_contra($account, $delta, "Undo $tid");
             }
@@ -61,7 +61,6 @@ sub undo :Tab(&tab) ($self, $cart, $tid, @) {
 
         call_hooks("undo", $cart) or return ABORT;
 
-        local $doing_undo = 1;  # don't allow undoing undos
         $cart->checkout('-undo');
 
         return ACCEPT;
@@ -85,8 +84,17 @@ sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
     }
 }
 
+sub hook_checkout($class, $cart, $account, $transaction_id, @) {
+    # XXX Maybe hook_account_balance should get $cart? Would be simpler.
+    $skip_undo_log = 1 if $cart->entries('skip_undo_log');
+}
+
 sub hook_account_balance($class, $account, $old, $delta, $new, $transaction_id, @) {
-    return if $doing_undo;  # don't allow undoing undos
+    return if $skip_undo_log;  # don't allow undoing undos
 
     append $filename, join(" ", $transaction_id, $account, -$delta, now()), "\n";
+}
+
+sub hook_checkout_done($class, $cart, $account, $transaction_id, @) {
+    $skip_undo_log = 0;
 }
