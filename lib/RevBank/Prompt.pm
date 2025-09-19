@@ -88,7 +88,6 @@ sub prompt($prompt, $completions = [], $default = "", $pos = 0, $cart = undef, $
             # Global variable that a signal handling plugin can set.
             # Do not use, but "return ABORT" instead.
             my $reason = $::ABORT_HACK;
-            $::ABORT_HACK = 0;
             main::abort($reason);
         }
 

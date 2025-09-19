@@ -32,6 +32,7 @@ $::HELP1{abort} = "Abort the current transaction";
 sub abort {
     @words = ();
     @retry = ();
+    undef $::ABORT_HACK;
 
     my $is_interrupt = @_ && $_[0] eq "^C";
     print "\n" if $is_interrupt;
@@ -41,7 +42,8 @@ sub abort {
         call_hooks "cart_changed", $cart;  # XXX ugly; refactor redisplay with instructions
         print "Pressing ^C again will also abort.\n";
     } else {
-        print @_, " " unless $is_interrupt;
+        print @_;
+        print " " unless $is_interrupt or @_ && $_[-1] =~ /\n$/;
         call_hooks "abort", $cart, \@_;
         $cart->empty;
         RevBank::FileIO::release_all_locks;
