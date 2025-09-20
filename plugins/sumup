@@ -11,7 +11,7 @@ my $ua = LWP::UserAgent->new(agent => "revbank");
 # see plugins/config (eventually... :))
 our $base_url = "http://127.0.0.1:3234";  # No trailing slash
 our $deposit_method = 'pin';
-our $description = 'RevBank deposit';
+our $sumup_description = 'RevBank payment';
 our $passerby_command = 'pin';
 our $passerby_account = '-pin';
 our $min = RevBank::Amount->new(10);
@@ -146,7 +146,7 @@ sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
 
         my $result = eval {
             api_call('checkout', {
-                description => "revbankdinges",
+                description => $sumup_description,
                 cents => $amount->cents,
             });
         } or return ABORT, "$@" . "(If the payment terminal still prompts for a card, ignore it!)\n";
