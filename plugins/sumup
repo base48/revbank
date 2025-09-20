@@ -1,0 +1,209 @@
+#!perl
+use LWP::UserAgent;
+use JSON;
+use Time::HiRes qw(sleep);
+use List::Util ();
+
+# This plugin requires an API proxy: https://codeberg.org/revspace/sumup-proxy
+
+my $ua = LWP::UserAgent->new(agent => "revbank");
+
+# see plugins/config (eventually... :))
+our $base_url = "http://127.0.0.1:3234";  # No trailing slash
+our $deposit_method = 'pin';
+our $description = 'RevBank deposit';
+our $passerby_command = 'pin';
+our $passerby_account = '-pin';
+our $min = RevBank::Amount->new(10);
+our $max = RevBank::Amount->new(150_00);
+
+# TODO warn that statiegeld won't be refunded
+
+my $reader_id_fn = 'sumup_reader_id';
+
+sub reader_id() {
+    my $id = eval { slurp $reader_id_fn } or die "Pair first using _sumup_pair";
+    $id =~ s/\s+//g;
+    return $id;
+}
+
+sub api_call($uri, $content = {}) {
+    $content->{reader_id} = reader_id unless $uri eq 'pair';
+
+    my $response = $ua->post("$base_url/$uri",
+        Content_Type => 'application/json',
+        Content => encode_json($content),
+    );
+
+    $response->is_success
+        or die "HTTP request failed (/$uri " . $response->status_line . ")\n";
+
+    my $result = eval { decode_json $response->decoded_content }
+        or die "Invalid JSON from proxy (/$uri)\n";
+
+    $result->{error}
+        and die "API request failed ($result->{error})\n";
+
+    return $result;
+}
+
+sub is_statiegeld($entry) {
+    my $sp = \&RevBank::Plugin::statiegeld::statiegeld_product;
+    defined &$sp or return 0;
+    return $sp->($entry->attribute('product'));
+}
+
+sub command($self, $cart, $command, @) {
+    if ($command eq '_sumup_pair') {
+        return REJECT, "Already paired. _sumup_unpair?" if eval { reader_id };
+        return "Pairing code", \&pair;
+    }
+    if ($command eq '_sumup_unpair') {
+        return $self->unpair();
+    }
+    if ($passerby_command and $command eq $passerby_command) {
+        return $self->passerby($cart);
+    }
+    return NEXT;
+}
+
+sub passerby($self, $cart) {
+    return REJECT, "Can't use $passerby_command on an empty transaction; add products first."
+        if not $cart->size;
+
+    return REJECT, "Can't use $passerby_command on a deposit transaction."
+        if $cart->entries('is_deposit');
+
+    return REJECT, "Can't use $passerby_command on a withdraw transaction."
+        if $cart->entries('is_withdraw');
+
+    my $amount = -$cart->sum;
+
+    return REJECT, "Card payouts are not supported. Enter a username instead."  if $amount->cents < 0;
+    return REJECT, "Amount is under minimum of $min." if $amount < $min;
+    return REJECT, "Amount is over maximum of $max."  if $amount > $max;
+
+    my $description = "Accountless payment (Card)";  # Must have "()" for transaction_code
+
+    $cart->display if $cart->changed;
+
+    print "\e[7mNOTE: Deposit returns are not supported for card payments.\e[m\n"
+        if List::Util::any { is_statiegeld($_) } $cart->entries('product');
+
+    $cart
+        ->add(+$amount, $description, { is_deposit => 1, method => $deposit_method, skip_undo_log => 1 })
+        ->add_contra("-deposits/$deposit_method", -$amount, $description);
+
+
+    $cart->checkout($passerby_account);
+
+    return ACCEPT;
+}
+
+sub pair ($self, $cart, $input, @) {
+    my $result = api_call('pair', { pairing_code => $input });
+    if (defined $result->{id}) {
+        spurt $reader_id_fn, $result->{id};
+    }
+
+    if (defined $result->{message}) {
+        print $result->{message}, "\n";
+    }
+
+    return ACCEPT;
+}
+
+sub unpair($self) {
+    my $reader_id = reader_id;
+    my $result = api_call('unpair', { reader_id => $reader_id });
+    print $result->{message} || "No message from server (unpairing succesful? Who knows...)";
+    spurt $reader_id_fn, "";
+    return ACCEPT;
+}
+
+
+sub hook_add_entry($class, $cart, $entry, @) {
+    $entry->has_attribute('is_deposit') and $entry->attribute('method') eq $deposit_method
+        or return;
+
+    my @deposits = $cart->entries('is_deposit');
+    return ABORT, "Can't combine card deposits." if @deposits;
+    return ABORT, "Amount is under minimum of $min." if $entry->amount < $min;
+    return ABORT, "Amount is over maximum of $max."  if $entry->amount > $max;
+
+    $entry->attribute(skip_undo_log => 1);
+    return;
+}
+
+sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
+    ENTRY: for my $entry ($cart->entries('is_deposit')) {
+        $entry->attribute('method') eq $deposit_method or next;
+
+        print "Follow instructions on payment terminal...\n";
+
+        my $reader_id = reader_id;
+        my $amount = $entry->amount;
+
+        my $result = eval {
+            api_call('checkout', {
+                description => "revbankdinges",
+                cents => $amount->cents,
+            });
+        } or return ABORT, "$@" . "(If the payment terminal still prompts for a card, ignore it!)\n";
+
+        my $tid = $result->{client_transaction_id} or die "No transaction ID in API response";
+
+        my $printed_pending = 0;
+        my $max_attempts = 150;
+        my $max_time = time() + 61;
+        my $code_added = 0;
+        my $status;
+        POLL: for my $attempt (1..$max_attempts) {
+            if (time() > $max_time) {
+                $status = 'TIMEOUT';
+                last POLL;
+            }
+            my $result = eval { api_call('status', { client_transaction_id => $tid }) } or do {
+                print $@;
+                my $ttl = $max_time - time();
+                print "Retrying... ($attempt/$max_attempts, $ttl sec)\n";
+                sleep 0.2;
+                next POLL;
+            };
+            $status = $result->{status} or die "Invalid response from proxy";
+
+            if ($result->{amount} and RevBank::Amount->new_from_float($result->{amount}) ne $amount) {
+                die "Won't continue because sumup API says the amount is $result->{amount}, which differs from $amount";
+            }
+
+            if ($result->{transaction_code} and not $code_added) {
+                $entry->{description} =~ s/\)/; $result->{transaction_code})/;
+                $code_added = 1;
+            }
+
+            if ($status eq 'SUCCESSFUL') {
+                print "Payment succesful.\n";
+                next ENTRY;
+            }
+            if ($status eq 'UNKNOWN') {
+                # Directly after creating the transaction, the API often
+                # returns a 404 for a few seconds. The proxy translates this to
+                # UNKNOWN.
+                sleep 1;
+            } elsif ($status eq 'PENDING') {
+                # Waiting for user interaction on the terminal.
+                sleep 1;
+            } else {
+                return ABORT, "Payment failed, status code: $status.\n";
+            }
+            if ($::ABORT_HACK) {  # ^C
+                # API documentation: "There is no confirmation of the termination."
+                print "\nWait...\n";
+                eval { api_call('terminate') };  # Opportunistic
+                return ABORT, $::ABORT_HACK;
+            }
+        }
+        return ABORT, "Payment timeout.\n";
+    }
+    return;
+}
