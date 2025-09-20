@@ -21,9 +21,10 @@ nav:
         - RevBank::Products: lib/RevBank/Products.md
         - RevBank::TextEditor: lib/RevBank/TextEditor.md
     - Plugins:
+        - products: plugins/products.md
         - statiegeld: plugins/statiegeld.md
         - statiegeld_tokens: plugins/statiegeld_tokens.md
-        - products: plugins/products.md
+        - sumup: plugins/sumup.md
         - vat: plugins/vat.md
     - Sites:
         - revbank.nl: https://revbank.nl/

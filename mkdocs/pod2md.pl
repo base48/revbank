@@ -33,7 +33,7 @@ sub pod2md($filename) {
 				my $title = $2;
 				("#" x ($depth + 1))
 				. " "
-				. ($title =~ /[a-z]/ ? $title : ucfirst lc $title)
+				. ($depth > 1 || $title =~ /[a-z]/ ? $title : ucfirst lc $title)
 			}e;
 		}
 
