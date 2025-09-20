@@ -4,11 +4,9 @@ use JSON;
 use Time::HiRes qw(sleep);
 use List::Util ();
 
-# This plugin requires an API proxy: https://codeberg.org/revspace/sumup-proxy
+# Read the documentation for this plugin.
 
-my $ua = LWP::UserAgent->new(agent => "revbank");
-
-# see plugins/config (eventually... :))
+# Don't change these here, but use a config plugin. See plugins/config.example
 our $base_url = "http://127.0.0.1:3234";  # No trailing slash
 our $deposit_method = 'pin';
 our $sumup_description = 'RevBank payment';
@@ -17,6 +15,7 @@ our $passerby_account = '-pin';
 our $min = RevBank::Amount->new(1_00);
 our $max = RevBank::Amount->new(150_00);
 
+my $ua = LWP::UserAgent->new(agent => "revbank");
 my $reader_id_fn = 'sumup_reader_id';
 
 sub reader_id() {

@@ -1,0 +1,106 @@
+=head1 NAME
+
+sumup - RevBank plugin for SumUp card payments
+
+=head1 DESCRIPTION
+
+This plugin allows interactive card payments using the SumUp Cloud API and a
+connected terminal.
+
+=head2 Usage
+
+=over
+
+=item * Get a compatible payment terminal
+
+Note: SumUp calls their terminals "readers".
+
+At the moment of writing, only the I<Solo> model supports the "Cloud API".
+Note: the I<Solo Lite> does not.
+
+Because these terminals are not linked to specific accounts, you can get a used
+one. But they are country-locked so make sure it's one from where you intend to
+use it.
+
+=item * Create an account and have it approved.
+
+Create a SumUp account and go through the verification process.
+
+=item * Create an API key
+
+In the SumUp Developer site, create an API key. It is possible to create a test
+account with its own API key. It is recommended to test everything in a copy of
+your RevBank installation, using the test account.
+
+Note that the test account has its own Merchant ID too, which you can look up
+in the Dashboard.
+
+=item * Install the API proxy
+
+SumUp's API keys can only be linked to the admin account, and as such, have
+full rights. Yikes. You wouldn't want to use that in RevBank directly. The
+proxy provides very limited API access for RevBank to use.
+
+Under a DIFFERENT user account, that you made just for running this proxy:
+
+	git clone https://codeberg.org/revspace/sumup-proxy
+	cd sumup-proxy
+	yarn install
+
+Configure it with your C<merchantId> and C<apiKey>. Ensure that C<config.json>
+is only readable by the user account you made for this service. (Or only by
+root, if you use the C<LoadCredential=> feature from systemd, per the example
+C<.service> file.)
+
+Don't forget to make sure the service runs on bootup.
+
+=item * Enable a I<deposit_method>
+
+There are a few steps to get this working. First, ensure that a
+C<deposit_methods> plugin is loaded. If you're not using C<deposit_methods>
+already, note that it is recommended to copy the plugin and then edit the copy,
+e.g.:
+
+	cp plugins/deposit_methods ~/.revbank
+	echo './deposit_methods' >> ~/.revbank/plugins
+	$EDITOR ~/.revbank/deposit_methods
+
+The example C<deposit_methods> plugin in the Git repository already comes with
+an example for card payments: the method is called `pin`. You could use a
+different name, like `card`, but in that case you also have to configure the
+C<sumup> plugin to use that. See C<plugins/config.example> for that.
+
+=item * Enable this plugin
+
+Add C<sumup> to your C<plugins> file. Restart RevBank.
+
+=item * Pair the payment terminal to the RevBank instance
+
+Don't login on the card reader. If it's already log in, log it back out again.
+When it's logged in, the Cloud API feature is not available.
+
+Connect the reader to the Cloud API. That will fail if it was previously
+paired, saying the code has expired. Just try it again.
+
+In RevBank, use:
+
+	_sumup_pair
+
+This command can't be tab-completed. Type the code from the reader's display.
+
+It may take a few seconds for the device to start connecting. Don't panic if it
+doesn't respond immediately.
+
+=back
+
+=head1 CONFIGURATION
+
+There are a few variables you can configure. They're pretty self-explanatory if
+you know how RevBank works. To disable accountless payments, you can set the
+C<$passerby_command> variable to an empty string.
+
+=head1 DISCLAIMER
+
+RevBank and its authors are not afiliated with SumUp in any way. The
+interoperability provided by this plugin should not be construed as
+endorsement of any company, products, or services.
