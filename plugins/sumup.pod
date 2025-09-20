@@ -41,18 +41,23 @@ SumUp's API keys can only be linked to the admin account, and as such, have
 full rights. Yikes. You wouldn't want to use that in RevBank directly. The
 proxy provides very limited API access for RevBank to use.
 
-Under a DIFFERENT user account, that you made just for running this proxy:
-
-	git clone https://codeberg.org/revspace/sumup-proxy
-	cd sumup-proxy
+	git clone https://codeberg.org/revspace/sumup-proxy /opt/sumup-proxy
+	cd /opt/sumup-proxy
 	yarn install
 
-Configure it with your C<merchantId> and C<apiKey>. Ensure that C<config.json>
-is only readable by the user account you made for this service. (Or only by
-root, if you use the C<LoadCredential=> feature from systemd, per the example
-C<.service> file.)
+When using systemd:
 
-Don't forget to make sure the service runs on bootup.
+	cp sumup-proxy.service /etc/systemd/system
+	cp config.example.json /etc/sumup-proxy.json
+	chmod 600 /etc/sumup-proxy.json
+	$EDITOR /etc/sumup-proxy.json  # update merchantId and apiKey
+	systemctl start sumup-proxy
+	systemctl enable sumup-proxy
+	systemctl status sumup-proxy
+
+When not using systemd, find another way to run the proxy with its own
+dedicated user account and config file that is B<not readable> by others
+(including the user that runs `revbank`).
 
 =item * Enable a I<deposit_method>
 
