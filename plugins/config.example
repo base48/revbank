@@ -1,10 +1,18 @@
-# Copy this plugin and add its path at the BOTTOM of ~/.revbank/plugins
-# For example, if its name is ~/.revbank/config, add `./config` to the plugins
-# file.
-
+# Suggested usage: don't change this file, but COPY it and add it as a custom plugin:
+# 
+#    cp plugins/config.example ~/.revbank/config
+#    echo './config` >> ~/.revbank/plugins
+#    $EDITOR ~/.revbank/config
+#
 # Configuration is done with Perl package variables (namespaced global
 # variables). Note that the pluginname is usually all lowercase:
-#$RevBank::Plugin::pluginname::variablename = 42;
+#
+# Note: the example values are not necessarily the same as the default values.
+#
+# For historical reasons and backwards compatibility, the configuration of
+# amounts is not consistent between plugins. Refer to the examples to see if a
+# plugin wants an integer (number of cents), a floating point number, or a
+# RevBank::Amount object.
 
 #$RevBank::balance_warning_cents = -1337;
 
@@ -14,6 +22,7 @@
 #$RevBank::Plugin::deposit_methods::iban = "NL 99 ABCD 1234 5678 90";
 
 #$RevBank::Plugin::dinnerbonus::bonus = 1.50;
+#$RevBank::Plugin::dinnerbonus::target = '+sales/kitchenuse';
 
 #$RevBank::Plugin::idle::timeout_seconds = 5;
 
@@ -23,4 +32,12 @@
 
 #@RevBank::Plugin::nomoney::deny_plugins = qw(give market products take unlisted withdraw);
 
+#$RevBank::Plugin::statiegeld::addon_accounts = qw(+pfand);
+
 #$RevBank::Plugin::statiegeld_tokens::ttl_days = 30;
+
+#$RevBank::Plugin::sumup::deposit_method = 'card';
+#$RevBank::Plugin::sumup::passerby_command = 'card';
+#$RevBank::Plugin::sumup::passerby_account = '-card';
+#$RevBank::Plugin::sumup::min = RevBank::Amount->new(10_00);
+#$RevBank::Plugin::sumup::max = RevBank::Amount->new(42_00);
