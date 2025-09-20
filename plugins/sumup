@@ -51,7 +51,7 @@ sub is_statiegeld($entry) {
     return $sp->($entry->attribute('product'));
 }
 
-sub command($self, $cart, $command, @) {
+sub command :Tab(&tab) ($self, $cart, $command, @) {
     if ($command eq '_sumup_pair') {
         return REJECT, "Already paired. _sumup_unpair?" if eval { reader_id };
         return "Pairing code", \&pair;
@@ -63,6 +63,11 @@ sub command($self, $cart, $command, @) {
         return $self->passerby($cart);
     }
     return NEXT;
+}
+
+sub tab {
+    return $passerby_command;
+    # unpair and pair intentionally not tab-completable
 }
 
 sub passerby($self, $cart) {
