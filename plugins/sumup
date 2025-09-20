@@ -14,7 +14,7 @@ our $deposit_method = 'pin';
 our $sumup_description = 'RevBank payment';
 our $passerby_command = 'pin';
 our $passerby_account = '-pin';
-our $min = RevBank::Amount->new(10);
+our $min = RevBank::Amount->new(1_00);
 our $max = RevBank::Amount->new(150_00);
 
 # TODO warn that statiegeld won't be refunded
