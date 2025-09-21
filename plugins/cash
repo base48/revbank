@@ -9,6 +9,8 @@
 
 HELP1 "cash" => "Checkout without a user account";
 
+push @RevBank::Plugin::tail::show_hidden, "-cash";
+
 sub command :Tab(cash) ($self, $cart, $command, @) {
     return NEXT if $command ne 'cash';
 

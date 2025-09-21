@@ -17,6 +17,7 @@ our $max = RevBank::Amount->new(150_00);
 
 my $ua = LWP::UserAgent->new(agent => "revbank");
 my $reader_id_fn = 'sumup_reader_id';
+push @RevBank::Plugin::tail::show_hidden, $passerby_account;
 
 sub reader_id() {
     my $id = eval { slurp $reader_id_fn } or die "Pair first using _sumup_pair";
