@@ -43,7 +43,7 @@ proxy provides very limited API access for RevBank to use.
 
 	git clone https://codeberg.org/revspace/sumup-proxy /opt/sumup-proxy
 	cd /opt/sumup-proxy
-	yarn install
+	yarn install  # NOTE: in Debian, use yarnpkg instead of yarn
 
 When using systemd:
 
