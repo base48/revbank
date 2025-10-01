@@ -41,7 +41,7 @@ sub read_products($filename = "products", $default_contra = "+sales/products") {
         my @addon_ids;
         my %tags;
 
-        my $compat = 0;
+        my $compat = 0;  # Until 2026-01-20
         if (@split == 1 and ref $split[0]) {
             $compat = 1;
         } else {
@@ -58,6 +58,7 @@ sub read_products($filename = "products", $default_contra = "+sales/products") {
         }
 
         if ($compat) {
+            # Until 2026-01-20
             $warnings++;
             warn "$filename line $linenr: can't parse as new format; assuming old format.\n" if $warnings < 4;
             warn "Too many warnings; suppressing the rest. See UPGRADING.md for instructions.\n" if $warnings == 4;
