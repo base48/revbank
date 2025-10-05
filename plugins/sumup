@@ -162,6 +162,23 @@ sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
         my $code_added = 0;
         my $status;
         POLL: for my $attempt (1..$max_attempts) {
+            if ($::ABORT_HACK) {  # ^C during sleep
+                # API documentation: "There is no confirmation of the termination."
+                print "\nWait...\n";
+                eval { api_call('terminate') };  # Opportunistic
+                if (not $status or $status eq 'UNKNOWN') {
+                    # `terminate` doesn't work when done too fast after `checkout`.
+                    for (1..5) {
+                        # Try to terminate before user can pay, because there's
+                        # no way to recover the transaction anymore. But try a
+                        # few times because `terminate` doesn't provide any
+                        # means of knowing whether it succeeded.
+                        sleep 1;
+                        eval { api_call('terminate') };
+                    }
+                }
+                return ABORT, $::ABORT_HACK;
+            }
             if (time() > $max_time) {
                 $status = 'TIMEOUT';
                 last POLL;
@@ -198,12 +215,6 @@ sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
                 sleep 1;
             } else {
                 return ABORT, "Payment failed, status code: $status.\n";
-            }
-            if ($::ABORT_HACK) {  # ^C
-                # API documentation: "There is no confirmation of the termination."
-                print "\nWait...\n";
-                eval { api_call('terminate') };  # Opportunistic
-                return ABORT, $::ABORT_HACK;
             }
         }
         return ABORT, "Payment timeout.\n";
