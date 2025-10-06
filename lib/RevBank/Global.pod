@@ -11,9 +11,13 @@ RevBank::Global - Constants and utility functions
 This module unconditionally exports the following symbols into the calling
 namespace:
 
+=head1 Constants
+
 =head2 ACCEPT, ABORT, REJECT, NEXT
 
 Return codes for plugins. See L<RevBank::Plugins>.
+
+=head1 Functions
 
 =head2 say
 

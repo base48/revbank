@@ -8,11 +8,9 @@ This package handles all accounts in RevBank. RevBank does doubly-entry bookkeep
 
 This package is where manipulation of the file C<accounts> happens.
 
-=head2 Account types
+=head1 Account types
 
-=over 4
-
-=item * User accounts
+=head2 User accounts
 
 User accounts are typically made with the C<adduser> command, and almost all interactions with RevBank will involve only user accounts, from the perspective of the user.
 
@@ -20,7 +18,7 @@ The name of a user account is called a I<username> within RevBank.
 
 Any account that does not begin with one of the characters C<->, C<+>, or C<*>, is a user account.
 
-=item * Hidden accounts
+=head2 Hidden accounts
 
 The name of a hidden account begins with a C<-> or C<+> sign. These accounts are created automatically by plugins to provide the I<double> part in I<doubly-entry bookkeeping>.
 
@@ -32,13 +30,11 @@ For example, the C<-cash> account will go to C<-4.20> when someone deposits 4.20
 
 Some plugins will use C</> to establish hierarchical account names in hidden accounts, like in C<+sales/products>. To RevBank, C</> is just a regular character, and it has no specific semantics for these hierarchies.
 
-=item * User-accessible special accounts
+=head2 User-accessible special accounts
 
 The name of a user-accessible special account begins with a C<*> sign. A special account can only be created by editing the C<accounts> file manually. They can be used like user accounts, with or without the C<*> sign, but they do not count towards the grand total of user accounts.
 
 The suggested use for user-accessible special accounts is for creating accounts that are virtual jars. For example, if users pay towards a virtual jar for kitchen equipment when they use the kitchen (like in the C<dinnerbonus> plugin), but are also allowed to use those funds for buying kitchen equipment, a user-accessible special account might be more convenient than having separate revenue and expense accounts, especially because those would typically be hidden accounts.
-
-=back
 
 =head3 Bookkeeping
 
@@ -66,7 +62,7 @@ This one is slightly more complicated, because this depends on your view on acco
 
 =back
 
-=head2 Data format
+=head1 Data format
 
 The file C<accounts> is a text file with one record per line, and whitespace separated fields. The columns are:
 
@@ -102,31 +98,31 @@ This field is empty for accounts that have not yet been used.
 
 Only the first two columns are mandatory. This makes migrating to RevBank very simple.
 
-=head2 Functions
+=head1 Functions
 
 Account names are case preserving, but case insensitive. Account name arguments to functions are case insensitive, but return values use the canonical capitalization.
 
 Anything that outputs a username should always run it through C<parse_user> or C<assert_account>.
 
-=head3 names
+=head2 names
 
 Returns a list of all account names.
 
-=head3 balance($name)
+=head2 balance($name)
 
 Returns a RevBank::Amount that represents the balance of the account.
 
-=head3 since($name)
+=head2 since($name)
 
 Returns the last used datetime of the account.
 
-=head3 create($name)
+=head2 create($name)
 
 Creates an account with that name and a balance of zero. The name must not already exist.
 
 After updating the file, calls the C<account_created> hook with the account name.
 
-=head3 delete($name)
+=head2 delete($name)
 
 Deletes an account.
 
@@ -134,7 +130,7 @@ Special accounts may not be deleted via this method. The account must have a bal
 
 Note that deleting an account only removes it from the C<accounts> file. Other associated data, like log lines, are not deleted. After creating the account again with C<create> (e.g. via the C<adduser> plugin), the account can be used again as if it was never deleted, because the old and the new account, only identified by the account name, are indistinguishable.
 
-=head3 update($name, $delta, $transaction_id)
+=head2 update($name, $delta, $transaction_id)
 
 Given the relative change (C<$delta>), updates the user balance for an account.
 
@@ -142,19 +138,19 @@ After updating the file, calls the C<account_balance> hook with the account name
 
 This function should not be used directly; instead, create a transaction via C<RevBank::Cart> and use C<checkout> to ensure a balanced booking for proper double-entry bookkeeping.
 
-=head3 is_hidden($name)
+=head2 is_hidden($name)
 
 Returns true if the account is hidden (begins with C<+> or C<->).
 
-=head3 is_special($name)
+=head2 is_special($name)
 
 Returns true if the account is hidden (begins with C<+> or C<->), or user-accessible but special (begins with C<*>).
 
-=head3 parse_user($username)
+=head2 parse_user($username)
 
 Returns the canonical account name if the account exists and is not a hidden account, or undef otherwise.
 
-=head3 assert_account($name)
+=head2 assert_account($name)
 
 For a hidden account, returns the canonical account name, creating the account if it did not already exist.
 

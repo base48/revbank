@@ -42,21 +42,21 @@ filename, regardless of which directory it's in, has to be unique.
 The Perl namespace for each plugin is C<RevBank::Plugin::x>, where C<x> is the
 filename without the directory name.
 
-=head2 Methods
+=head1 Methods
 
-=head3 RevBank::Plugins::load
+=head2 RevBank::Plugins::load
 
 Reads the C<plugins> file and load the plugins.
 
-=head3 RevBank::Plugins->new
+=head2 RevBank::Plugins->new
 
 Returns a B<list> of fresh plugin instances.
 
-=head3 RevBank::Plugins::register($package)
+=head2 RevBank::Plugins::register($package)
 
 Registers a plugin.
 
-=head3 RevBank::Plugins::call_hooks($hook, @arguments)
+=head2 RevBank::Plugins::call_hooks($hook, @arguments)
 
 Calls the given hook in each of the plugins. Non-standard hooks, called only
 by plugins, SHOULD be prefixed with the name of the plugin, and an underscore.
@@ -135,7 +135,7 @@ never reach the plugin's input methods.
 
 =back
 
-=head2 Hooks
+=head1 Hooks
 
 Hooks are called at specific points in the processing flow, and MAY introspect
 the shopping cart. They SHOULD NOT manipulate the shopping cart, but this option
@@ -238,7 +238,7 @@ C<RevBank::Messages>. Such a hack might look like:
         print "This message is much better!\n"
     }
 
-=head2 Utility functions
+=head1 Utility functions
 
 Several global utility functions are available. See L<RevBank::Global>
 

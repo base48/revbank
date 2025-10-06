@@ -7,7 +7,7 @@ sumup - RevBank plugin for SumUp card payments
 This plugin allows interactive card payments using the SumUp Cloud API and a
 connected terminal.
 
-=head2 Usage
+=head1 Installation
 
 =over
 

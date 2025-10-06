@@ -1,4 +1,10 @@
-## Installing RevBank
+# Installing RevBank
+
+Installation and basic configuration manual
+
+----
+
+## Installation
 
 RevBank will work on almost any sufficiently recent Linux or similar operating
 system, and should at least work on the current Debian `stable` or `oldstable`
@@ -36,7 +42,7 @@ RevBank can be executed without installing it (`./revbank`) or it can be
 installed using `perl Makefile.PL && make install`. The latter also gives you
 man pages.
 
-## Configuring RevBank
+## Basic configuration
 
 **RevBank just works out of the box** if you're in a hurry, but there's a lot you
 could customize.

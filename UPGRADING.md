@@ -1,4 +1,10 @@
-# Upgrade procedure
+# Upgrading RevBank
+
+Important notices for system administrators
+
+----
+
+## Upgrade procedure
 
 1. Stop any running `revbank` instances, or at least make sure nobody will be
    using RevBank during the upgrade.
@@ -19,7 +25,7 @@ supports Perl versions down to 5.36 (2022), which is in Debian 12 "bookworm"
 and 13 "trixie" becomes the new oldstable, RevBank will begin to require Perl
 5.40 (2024).
 
-# (2025-10-06) RevBank 11.0.0
+## (2025-10-06) RevBank 11.0.0
 
 Support for the deprecated timestamp-based transaction IDs was removed.
 
@@ -27,7 +33,7 @@ This means that if you wrote `LEGACY` to the `nextid` file and forgot to inform
 me that you want to keep this feature, your next transaction will have the ID
 `LEGACY`, followed by `LEGACZ`, `LEGADA`, `LEGADB`, and so on.
 
-# (2025-09-04) RevBank 10.6.1
+## (2025-09-04) RevBank 10.6.1
 
 Minimum Perl version bumped to 5.36 (the version in Debian oldstable).
 
@@ -49,7 +55,7 @@ plugin can no longer be loaded, these are some probably causes:
 Additionally, the plugin `deprecated_raw` has been removed from the repository.
 If you were still using that, remove it from `~/revbank/plugins`.
 
-# (2025-05-06) RevBank 10.2.0, 10.3.0
+## (2025-05-06) RevBank 10.2.0, 10.3.0
 
 No breaking change, but a change that several RevBank sysadmins have requested
 over the years.
@@ -61,7 +67,7 @@ refer to them *by path* in `~/revbank/plugins`.
 Some variables are now exposed as global variables that can be overridden in a
 custom plugin, see `plugins/config.example`.
 
-# (2025-05-05) RevBank 10.0.0
+## (2025-05-05) RevBank 10.0.0
 
 Major breaking change!
 
@@ -73,7 +79,7 @@ the command line. (If both are specified, the latter overrules the former.)
 This change makes it easier to make backups of just the data files, and allows
 running `revbank` from any working directory.
 
-## Create a data directory
+### Create a data directory
 
 Create a directory named `.revbank` in the home directory of the user account
 that runs `revbank`:
@@ -86,7 +92,7 @@ If this already exists, you've probably executed `revbank` before reading these
 instructions. Check that the files are just the example files that RevBank put
 there, and just delete them.
 
-## Rename data files
+### Rename data files
 
 To migrate your existing files, execute from the directory that has them:
 
@@ -113,14 +119,14 @@ messages saying the files don't exist.
 Note, if you've customized/forked the `revspace_mqtt` plugin, that its filename
 has changed to match the name of the plugin.
 
-## If the log file was append-only
+### If the log file was append-only
 
 If you get *Operation not permitted* on `.revbank.log` and/or `.revbank.undo`,
 you probably have protected them with `chattr +a` to only allow appending. Use
 `chattr -a` (as root!) to remove the protection, then move the file, then `+a`
 it again.
 
-## If you used git before
+### If you used git before
 
 Many RevBank installations had the data files in git, and this change is there
 to make that easier and to disentangle the data files from the code repository.
@@ -133,7 +139,7 @@ directory.
 
 It may be easier to start over, using the new git plugin:
 
-## Use git
+### Use git
 
 Many spaces had their own plugin for committing changes to git. RevBank now
 comes with a standard plugin, `git`, that does this in a more generic way. You
@@ -149,12 +155,12 @@ you do want to keep the log files in git, edit `~/.revbank/.gitignore` after it
 has been created. It's probably better to use a real backup solution, not
 (just) git.
 
-## Update external things that use the RevBank data files
+### Update external things that use the RevBank data files
 
 Don't forget to update any backup configuration, scripts, and other things that
 use the RevBank data files.
 
-## Update custom plugins
+### Update custom plugins
 
 The functions `slurp` and `spurt` will now prefix the path of the datadir to
 the given filename. Previously they worked from the current working directory.
@@ -162,7 +168,7 @@ the given filename. Previously they worked from the current working directory.
 If you're reading or writing any of the files listed above, those needs to be
 changed.
 
-# (2025-04-10) RevBank 9.0.0
+## (2025-04-10) RevBank 9.0.0
 
 There are no breaking changes in this release, but the old names mentioned
 below are now deprecated. All custom plugins that use these identifiers need to
@@ -176,7 +182,7 @@ The term 'account' is now the generic term (visible and hidden accounts), but
 'user' or 'username' is still used where only user accounts (visible accounts)
 are valid.
 
-## Renamed hooks
+### Renamed hooks
 
 | Old name            | New name               |
 |---------------------|------------------------|
@@ -187,7 +193,7 @@ The new hooks are added in addition to the old ones.
 
 The old hooks will be removed in a future version, after 2027-05-01.
 
-## Renamed global identifiers
+### Renamed global identifiers
 
 | Old name                      | New name                            |
 |-------------------------------|-------------------------------------|
@@ -205,7 +211,7 @@ would probably break things anyway.)
 The old functions/method names are aliases for the new ones, and will be
 removed after 2027-05-01.
 
-## Not renamed
+### Not renamed
 
 The following remain unchanged, as they only or mostly pertain to visible
 accounts, which are primarily intended as user accounts:
@@ -219,11 +225,11 @@ The following remain unchanged (for now) because external scripts might break
 if these were changed:
 - `NEWUSER` in the log file
 
-# (2024-12-26) RevBank 8.0.0
+## (2024-12-26) RevBank 8.0.0
 
 Another breaking change, another major version upgrade due to semantic versioning!
 
-## Breaking change:
+### Breaking change:
 
 This is very unlikely to affect anyone, but still: `percent` addons (like
 discounts) applied by `read_products` now have the calculated price in
@@ -235,7 +241,7 @@ using this in custom code. But if you did use this feature in a custom plugin
 (wow, I really want to know all about it!), just change `price` to `percent`
 where appropriate.
 
-## Non-breaking changes:
+### Non-breaking changes:
 
 * `RevBank::Plugins::products::read_products` was moved to
   `RevBank::Products::read_products`, but the old symbol still works.
@@ -255,7 +261,7 @@ exclude addon prices from the price tag (as is customary with
 statiegeld/pfand/deposits), add the new `#OPAQUE` hashtag to the respective
 addon lines in `revbank.products`.
 
-## Deprecation announcement
+### Deprecation announcement
 
 * Support for the old file format for `revbank.products` will be removed in
   2026. The new format was introduced in 6.0.0 in January 2024, but the old
@@ -266,7 +272,7 @@ addon lines in `revbank.products`.
   warns tells users to use `withdraw` or `unlisted` instead of a raw amount,
   after support for that was dropped in 3.3 in June 2022.
 
-# (2024-11-17) RevBank 7.1.0
+## (2024-11-17) RevBank 7.1.0
 
 The new plugin `nomoney` is enabled by default. For rationale, see
 https://forum.revspace.nl/t/inkoopacties-via-revbank/469.
@@ -278,7 +284,7 @@ transactions if the user has insufficient balance; by default only for
 give/take/withdraw, but the list of affected plugins can be customized.)
 
 
-# (2024-10-18) RevBank 7.0.0
+## (2024-10-18) RevBank 7.0.0
 
 Support for unbalanced entries has been removed, ensuring a pure double-entry
 bookkeeping system. Grep your log for the string `UNBALANCED` if you're not
@@ -308,12 +314,12 @@ perl -Ilib -MRevBank::Amount -lane'$sum += RevBank::Amount->parse_string($F[1])
 }{ print $sum' revbank.accounts
 ```
 
-# (2024-01-20) RevBank 6.0.0
+## (2024-01-20) RevBank 6.0.0
 
 Note that the changes to `revbank.products` do NOT apply to `revbank.market`
 and other files.
 
-## Update your `revbank.products` file
+### Update your `revbank.products` file
 
 TL;DR: Product descriptions now need `"quotes"` around them.
 
@@ -360,7 +366,7 @@ perl -i.backupv6 -ple'unless (/^\s*#/ or /^\s*$/) {
 Note that this will leave commented lines unchanged! If those contain disabled
 products, you'll have to add the quotes yourself.
 
-## New feature: hashtags in `revbank.products`
+### New feature: hashtags in `revbank.products`
 
 After the description field, you can add hashtag fields. These begin with `#`
 and may take the form of a lone `#hashtag`, or they may be used as a
@@ -379,7 +385,7 @@ currently do nothing.
 See https://git.bitlair.nl/bitlair/revbank-inflatinator for a possible use of
 adding metadata.
 
-# (2023-12-26) RevBank 5.0.0
+## (2023-12-26) RevBank 5.0.0
 
 This version comes with breaking changes to the command line syntax, to shield
 overconfident users of the interface for advanced users from several classes of
@@ -389,7 +395,7 @@ interface.
 Basically, you can now use `;` to separate multiple commands on a single line
 of input, and in some cases this is mandatory.
 
-## Limited set of characters allowed in usernames and product IDs
+### Limited set of characters allowed in usernames and product IDs
 
 Historically, RevBank has allowed almost every character as a valid character,
 because it wasn't known if these would show up in barcodes. In more than 13
@@ -405,7 +411,7 @@ New usernames must now only contain the characters from the set
 `A-Z a-z 0-9 _ - + / ^ * [] {}` and the first character must not be any of
 `- + / ^ *`.
 
-## Update scripts that run revbank commands
+### Update scripts that run revbank commands
 
 When providing multiple commands on a single line, RevBank now requires a
 separating `;` after commands that finalize transactions, and after commands
@@ -416,7 +422,7 @@ commands require changing. Specifically, add a `;` between a multi-word command
 and the final username (e.g. `give *lasercutter 10; xyzzy`) and in between
 transactions.
 
-## Update your custom plugins
+### Update your custom plugins
 
 * The undocumented feature `ROLLBACK_UNDO` is gone. Use `return ABORT` in a
   function called `hook_undo` instead.
@@ -430,7 +436,7 @@ transactions.
   should only happen if the checkout succeeds, should be put *after* the call,
   or in a hook.
 
-# (2023-11-05) RevBank 4.2.0
+## (2023-11-05) RevBank 4.2.0
 
 Accounts that begin with `*` are now special: like hidden accounts, they do not
 count towards the grand total, but unlike hidden accouns, they can be used as
@@ -446,9 +452,9 @@ you need to edit `revbank.accounts` manually.
 
 When upgrading, check that no accounts beginning with `*` already exist.
 
-# (2023-09-20) RevBank 4.0.0
+## (2023-09-20) RevBank 4.0.0
 
-## You must pick a transaction ID style
+### You must pick a transaction ID style
 
 Transaction IDs are now sequential for better auditability. In previous
 versions, they were timestamps (unix time minus 1.3e9).
@@ -460,7 +466,7 @@ would be bad.
 You should choose which transaction IDs you want, and write your choice to a
 file called `.revbank.nextid`.
 
-### Option 1: continue with large IDs but increment by 1 from now on
+#### Option 1: continue with large IDs but increment by 1 from now on
 
 **If you don't write a `.revbank.nextid` file,** RevBank will create one for
 you, but you might not like it. It will generate one more timestamp based ID
@@ -468,7 +474,7 @@ and then increment that for subsequent transactions. This has the advantage of
 not having the one-time break of monotonicity, but you will be stuck with the
 long IDs and they will no longer convey time information.
 
-### Option 2: beginning a new sequence
+#### Option 2: beginning a new sequence
 
 Anything that works with Perl's `++` operator will work, and that gives a few
 options. If you want to start over with transaction ID **1**, write that to the
@@ -506,7 +512,7 @@ perl -lane'BEGIN { $max = time() - 1.3e9 }
 This is safe because the timestamp based IDs were huge and are unlikely to
 overlap at least the next few decades.
 
-### ~~Option 3: keeping the legacy transaction ID scheme (for now)~~
+#### ~~Option 3: keeping the legacy transaction ID scheme (for now)~~
 
 ~~Finally, for those who really don't want to change the scheme now, the old
 system can be retained by writing the special-cased value `LEGACY`. This
@@ -515,18 +521,18 @@ if nobody tries to convince me otherwise.~~
 
 (Removed in 11.0.0)
 
-## Update `revbank.plugins`
+### Update `revbank.plugins`
 
 There are a few new plugins that you may wish to enable. Some have been around
 longer than RevBank 3.9, but haven't been mentioned in UPGRADING.md before.
 
-### `vat`
+#### `vat`
 
 Automatically calculate and set aside VAT ("BTW" in Dutch) on generated
 revenue. You will probably not need this. Before enabling this plugin, read the
 documentation in `plugins/vat.pod` first.
 
-### `regex_gtin`
+#### `regex_gtin`
 
 To support GS1 Digital Links and other GS1 barcodes. The DL are a new way for
 QR codes that contain product IDs and other metadata while also being usable
@@ -536,29 +542,29 @@ they're URLs with /01/ and a 14-digit product ID in them. Enabling this plugin
 is probably useful and harmless; add it to `revbank.plugins` *after* plugins
 that deal with product IDs like `products` and `market`.
 
-### `regex_angel`
+#### `regex_angel`
 
 Replaces custom SHA2017/MCH2022 angel badge hacks. Add after `users` in
 `revbank.plugins` after removing your custom plugin for `angel-` barcodes.
 
-### `adduser_note`
+#### `adduser_note`
 
 Add *before* `adduser` in `revbank.plugins`. This will inform new users that
 RevBank is insecure by design and what implications that can have. Enabling
 this plugin is recommended.
 
-### `statiegeld` and `statiegeld_tokens`
+#### `statiegeld` and `statiegeld_tokens`
 
 Charge and refund container deposit return ("statiegeld" in Dutch). Read the
 documentation in `plugins/statiegeld.pod` and `plugins/statiegeld_tokens.pod`
 for instructions.
 
-### `cash_drawer`
+#### `cash_drawer`
 
 If you have an electronic cash drawer, copy or change this plugin and add code
 to trigger it whenever something is done that involves cash.
 
-## Deprecation note
+### Deprecation note
 
 RevBank has supported "doubly entry bookkeeping" since version 3.4 last year.
 For backwards compatibility with custom plugins, support for unbalanced
@@ -569,7 +575,7 @@ period of 2 years after the introduction of balanced transactions. If you're
 using custom plugins, grep your log file for the text "UNBALANCED ENTRY" to see
 if changes are needed.
 
-# (2023-08-21) RevBank 3.9
+## (2023-08-21) RevBank 3.9
 
 A tiny change that could break things: the shebang was changed from
 `#!/usr/bin/perl` to the more modern `#!/usr/bin/env perl`.
@@ -585,9 +591,9 @@ stable paths that NixOS provides for shebangs are `#!/bin/sh` or
 `env` (e.g. for use with perlbrew), but learning about Nix has tipped the
 scales for me. (The performance penalty is not relevant for RevBank.)
 
-# (2023-02-12) RevBank 3.8
+## (2023-02-12) RevBank 3.8
 
-## Update your `revbank.plugins`
+### Update your `revbank.plugins`
 
 Deduplication is moved from individual plugins to a plugin that does that. If
 you want to keep deduplication of cart items, and you probably do want that,
@@ -600,15 +606,15 @@ want to keep the deprecation warning. But for new RevBank installations it does
 not make sense. To keep providing these warnings to users that enter raw
 amounts, add `deprecated_raw` to the very end of `revbank.plugins`.
 
-# (2022-12-25) RevBank 3.6
+## (2022-12-25) RevBank 3.6
 
-## Update your `revbank.plugins`
+### Update your `revbank.plugins`
 
 The `edit` command is now in its own plugin, so that it can be disabled (this
 has been requested several times). To keep the ability to edit the products
 list from within RevBank, add `edit` to `revbank.plugins`.
 
-## Check your `revbank.products`
+### Check your `revbank.products`
 
 > Added 2024-01-20 v6.0.0: if you're upgrading to v6.0.0 from a version before
 > v3.6, instead of following these instructions, you can just add quotes to the
@@ -635,7 +641,7 @@ no longer be entered as this syntax now has special semantics.~~
     more_stuff      1.00  Example product with +something but not at the end
     bbq             1.00  3+ pieces of meat
 
-## New features in `products` plugin
+### New features in `products` plugin
 
 There are several new features that you may wish to take advantage of. By
 combining the new features, powerful things can be done that previously
@@ -644,7 +650,7 @@ required custom plugins.
 The syntax for `revbank.products` has become complex. Please refer to the new
 documentation in [products.pod](plugins/products.pod) for details.
 
-### Negative prices (add money to account)
+#### Negative prices (add money to account)
 
 Support for non-positive prices was requested several times over the years and
 has now finally been implemented.
@@ -652,14 +658,14 @@ has now finally been implemented.
 It's now possible to have a product with a negative amount, which when "bought"
 will cause the user to receive money instead of spending it.
 
-### Product addons
+#### Product addons
 
 It is now possible to add products to products, which is done by specifying
 `+foo` at the end of a product description, where `foo` is the id of another
 product. This can be used for surcharges and discounts, or for bundles of
 products that can also be bought individually.
 
-### Explicit contra accounts
+#### Explicit contra accounts
 
 By default, products sold via the `products` plugin, are accounted on the
 `+sales/products` contra account. This can now be overridden by specifying
@@ -671,7 +677,7 @@ When the specified contra account is a regular account (does not start with `+`
 or `-`), this works similar to the `market` plugin, but without any commission
 for the organization.
 
-## Pfand plugin: gone
+### Pfand plugin: gone
 
 The `pfand` plugin, that was originally written as a proof-of-concept demo, has
 been removed without deprecation cycle. To my knowledge, nobody uses this
@@ -685,7 +691,7 @@ would be crazy or wouldn't make sense in a self-service environment. RevBank
 was too limited to support it properly, but I think current RevBank fulfills
 all requirements for making a better, proper pfand plugin.
 
-## Perl warnings are now enabled for plugins
+### Perl warnings are now enabled for plugins
 
 If you get Perl warnings from a plugin, and don't want to fix the issues with
 the code (or disagree with the warning), just add "no warnings;" to the top of
@@ -697,7 +703,7 @@ Perl newbies: you can test whether something is defined with `if
 (defined($foo)) { ... }`, or provide a default value with `$foo // "example
 default value"`.
 
-# (2022-08-30) RevBank 3.5
+## (2022-08-30) RevBank 3.5
 
 RevBank now has a simple built-in text editor for products and market;
 rationale in lib/RevBank/TextArea.pod.
@@ -705,30 +711,30 @@ rationale in lib/RevBank/TextArea.pod.
 This comes with a new dependency, the perl module Curses::UI (debian:
 libcurses-ui-perl).
 
-# (2022-06-11) RevBank 3.4
+## (2022-06-11) RevBank 3.4
 
 RevBank now has built-in hidden accounts and balanced transactions
 (double-entry bookkeeping). These accounts will be made automatically, and
 hidden from the user interface.
 
-## Update external scripts
+### Update external scripts
 
 If you have scripts that parse `.revbank.log` or `revbank.products`, you may
 want to ignore all accounts that start with `-` or `+`.
 
-## User account names that are now invalid
+### User account names that are now invalid
 
 In the hopefully very unlikely event that you have existing user accounts that
 start with `-` or `+`, those will have to be renamed manually, as such accounts
 are no longer accessible.
 
-## Updating custom plugins (optional for now)
+### Updating custom plugins (optional for now)
 
 For your custom plugins, you may want to add `->add_contra` calls to every
 `$cart->add` call that does not already have them. Unbalanced transactions will
 probably be deprecated in a future version.
 
-## New feature: cashbox tracking
+### New feature: cashbox tracking
 
 The new `cash` plugin will display messages about how much the cash box should
 hold, whenever someone withdraws or does a cash deposit. For that to make
@@ -741,7 +747,7 @@ the `skim` plugin too, which introduces the (hidden) commands `skim` and
 `unskim` which can be used to keep the cash box data synchronised when someone
 (probably a board member) skims it.
 
-# (2022-06-04) RevBank 3.3
+## (2022-06-04) RevBank 3.3
 
 Raw amounts without a command are no longer supported. There was already an
 explicit command for unlisted products, `unlisted`, and for withdrawals there
@@ -756,9 +762,9 @@ When upgrading, make sure the `unlisted` plugin is installed in
 enters an amount is wrong and the functionality for paying for unlisted
 products is lost.
 
-# (2021-12-02) RevBank 3.2
+## (2021-12-02) RevBank 3.2
 
-## Update your custom plugins!
+### Update your custom plugins!
 
 Test your custom plugins. If they don't emit warnings about floating point
 numbers, or if you don't care about warnings, then no changes are required.
@@ -781,7 +787,7 @@ Most hard-coded uses of floats are safe enough and transparently supported
 through overloaded operators, but if there are more than 2 decimal places, the
 operation will be disallowed.
 
-# (2019-11-05) RevBank 3
+## (2019-11-05) RevBank 3
 
 The following features were removed:
 
@@ -793,19 +799,19 @@ The following features were removed:
 
     Use `adduser` instead.
 
-## Update your custom plugins!
+### Update your custom plugins!
 
-### Method `$cart->is_multi_user`
+#### Method `$cart->is_multi_user`
 
 Method has been removed.
 
-### Method `$cart->delete($user, $index)`
+#### Method `$cart->delete($user, $index)`
 
 Method has been removed.
 
 Delete a specific entry, as returned by `$cart->entries`, instead.
 
-### Hooks `add` and `added`
+#### Hooks `add` and `added`
 
 Use `add_entry` and `added_entry` instead, which gets a RevBank::Cart::Entry
 object, instead.
@@ -813,9 +819,9 @@ object, instead.
 Note that the new "entries", unlike old "items", can have a `quantity` other
 than 1.
 
-### Method `$cart->add(undef, ...)`
+#### Method `$cart->add(undef, ...)`
 
-### Method `$cart->add($user, ...)`
+#### Method `$cart->add($user, ...)`
 
 The `add` method now always creates an entry from the perspective of the
 current user, and returns a RevBank::Cart::Entry object to which "contras" can
@@ -827,7 +833,7 @@ argument, simply remove the `undef, `. When multiple items were added that
 belong together, consider using `add_contra` for the subsequent lines; see the
 `take` and `give` plugins for examples.
 
-### Method `$cart->select_items`
+#### Method `$cart->select_items`
 
 Use `entries` instead, which takes the same kind of argument. Note that
 entries work slightly differently: they can have a quantity and attached contra

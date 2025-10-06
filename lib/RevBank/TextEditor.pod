@@ -21,13 +21,13 @@ calls it, "pacing".)
 And of course, all the editors out there will let you open other files, or even
 run shells...
 
-=head2 Functions
+=head1 Functions
 
-=head3 edit($filename)
+=head2 edit($filename)
 
 Runs the editor.
 
-=head2 CAVEATS
+=head1 CAVEATS
 
 =over 2
 

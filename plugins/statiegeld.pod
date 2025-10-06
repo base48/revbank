@@ -23,7 +23,7 @@ Alternatively, on a regular RevBank terminal, the C<deposit> command (which is
 provided by the C<deposit> plugin) is extended to support product id's where
 you would normally enter an amount.
 
-=head2 Usage
+=head1 Usage
 
 If RevBank was run with the environment variable C<REVBANK_STATIEGELD> set to
 C<1>, the user just scans the products.
@@ -34,7 +34,7 @@ The product_id (barcode) is used to look up the stategield addon. In case of a
 non-hidden addon (does not begin with C<+>), the name of the addon can also be
 used.
 
-=head2 Configuration
+=head1 Configuration
 
 The statiegeld plugin recognises products from the file C<products> by matching
 the contra accounts (the C<+statiegeld> in C<0.15@+statiegeld>) of the
@@ -48,7 +48,7 @@ Don't remove statiegeld addons because that means customers can no longer get
 their deposits back. Also, consider the consequences of changing the price
 before doing so.
 
-=head2 "statiegeld"?!
+=head1 "statiegeld"?!
 
 "Statiegeld" is the Dutch word for container deposits. Because the English word
 "deposit" is also the verb for adding money to your account, and used
@@ -56,7 +56,7 @@ extensively in RevBank, it was useful to distinguish between the two features.
 
 In the user interface, the terms "deposit" and "deposit return" are used.
 
-=head2 Limits
+=head1 Limits
 
 By itself, the C<statiegeld> plugin only supports refunding deposits for known
 products that are configured as such. There is no limit to how many containers

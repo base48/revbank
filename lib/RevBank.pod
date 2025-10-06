@@ -4,7 +4,11 @@ RevBank - Pre-paid bar tab for hackerspaces
 
 =head1 DESCRIPTION
 
-=head2 High-level architecture
+RevBank is a self-service checkout and payment system for hackerspaces, primarily intended for drinks and snacks.
+
+This document describes the software architecture. For more hands-on documentation, refer to the other documents.
+
+=head1 High-level architecture
 
 Since version 2, RevBank is loosely modeled after C<qpsmtpd>, which is an SMTP server in which the core speaks the SMTP protocol, but doesn't do anything with the commands it receives. Actually handling the commands is the responsibility of plugins. Without plugins, the software is useless.
 
@@ -14,7 +18,7 @@ In addition, RevBank provides the concept of accounts through L<RevBank::Account
 
 Notably, the RevBank core does B<not> have any notion of "products". Support for buying products through RevBank is provided by plugins, like the included C<products> and C<market> plugins. It is easy to add another source of products by writing another plugin. A plugin contains arbitrary code and can do anything, including querying external resources.
 
-=head2 Data files
+=head1 Data files
 
 All files are simple text files, generally whitespace and newline separated. While this isn't particularly "cool", there are many tools that work with them, like C<diff> and C<git> and C<vim>. That means a lot of functionality (such as editing a product list) doesn't require any specialized user interfaces. It also makes creating backups trivial.
 
@@ -22,7 +26,7 @@ RevBank uses a single lock file, so you can safely use multiple processes. It do
 
 RevBank does currently not behave well with non-ASCII data.
 
-=head2 The input loop
+=head1 The input loop
 
 RevBank is a user-interactive CLI, intended for use with a keyboard and a barcode scanner. The barcode scanner is configured as a virtual keyboard device; RevBank doesn't care if the input is given with the barcode scanner or the keyboard, and it is considered a feature that everything that can be typed, can be turned into a scannable barcode, and that any barcode data can be typed instead of scanned.
 
@@ -36,11 +40,11 @@ There is no syntax for indicating the end of a command in the simple mode. Every
 
 Similarly, the end of the "list of products" is not indicated by syntax, but by entering a username. Or, more technically correct: every product id is a command, and so is every username. The product id command adds an entry to the cart, the username command finalizes the transaction and empties the cart.
 
-=head3 abort
+=head2 abort
 
 The string C<abort> is hard-coded and will always abort the current transaction (i.e. reset the global state (cart)). This is intentional as users always need a "way out", and C<abort> is unlikely to be a valid response to any prompt anyway. (The "advanced" input method lets you quote it, like C<"abort">, although that is probably only useful for a print-a-barcode plugin...)
 
-=head2 Plugins
+=head1 Plugins
 
 All user input, except C<abort>, is handled by plugins. Without plugins, C<abort> is the only input that does something, and even then, it's just emptying an already empty shopping cart.
 
@@ -48,7 +52,7 @@ Information about writing plugins is provided in L<RevBank::Plugins>.
 
 Commands and hooks can manipulate the cart to delete, add, or modify its entries.
 
-=head3 Commands
+=head2 Commands
 
 For every command given on the top-level prompt of the input loop, the C<command> method of every plugin is queried until a plugin returns C<ACCEPT>, C<REJECT>, or C<ABORT>. All other plugins return C<NEXT> to indicate that the remaining plugins should be tried. A plugin can, however, do something with the input, and still return C<NEXT>. It can even manipulate the input before passing it on to the next plugin.
 
@@ -60,7 +64,7 @@ Commands can request arguments by returning a reference to a function. This is t
 
 There is no way for a command to declare its number of arguments (follow-up questions), which means that it is not possible to interpret RevBank input without executing it. This also means that it is not safe to replay the log file in a different version or configuration (e.g. in lieu of restoring a backup).
 
-=head3 Hooks
+=head2 Hooks
 
 All kinds of things in RevBank will "call hooks", which is a fancy way of saying they'll try to call a certain method, for each and every plugin. With commands, the intention is that one plugin will be "the one" to handle the command, but with hooks, I<every> plugin's hook method is called. The only way around that is returning ABORT, which will kill the entire unfinished transaction.
 

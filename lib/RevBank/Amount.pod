@@ -53,9 +53,9 @@ do that), strange things can happen. Also, "-0.00" is annoying...
 Note: this class does not play nice with other classes that use operator
 overloading.
 
-=head2 Functions
+=head1 Functions
 
-=head3 parse_amount
+=head2 parse_amount
 
 Provided by RevBank::Global, and available in plugins. Unlike the
 method C<< RevBank::Amount->parse_string >>, the function C<parse_amount> will
@@ -63,19 +63,19 @@ not allow negative numbers, which is typically a good idea to maintain sanity.
 When writing plugins, you should strongly consider providing two different
 commands instead of allowing negative numbers.
 
-=head2 Constructors
+=head1 Constructors
 
-=head3 new
+=head2 new
 
 Construct from a number of cents. If the number is not an integer, it
 will be rounded without warning, is a possibly surprising way.
 
-=head3 new_from_float
+=head2 new_from_float
 
 Construct from a number. The number will be rounded to two decimals
 without warning, in a possibly surprising way.
 
-=head3 parse_string
+=head2 parse_string
 
 Construct from a string. Either C<,> or C<.> is accepted as a decimal
 point; no other separators (like thousands separators) are accepted. The
@@ -86,24 +86,24 @@ number or between the sign and the number.
 
 Returns undef when the given string is not valid.
 
-=head2 Instance methods
+=head1 Instance methods
 
-=head3 cents
+=head2 cents
 
 Returns an integer that accurately represents the amount in cents.
 
-=head3 float
+=head2 float
 
 Returns the floating point number that is the closest to the actual
 amount. Note: not all numbers can be accurately represented as a
 floating point number, which is the reason this class exists...
 
-=head3 string
+=head2 string
 
 Returns a formatted number. Negative numbers get a sign in front, while
 zero and positive numbers do not.
 
-=head2 Overloading
+=head1 Overloading
 
 Overloaded operations may throw an exception when the operand doesn't
 stringify to something that is accepted by C<parse_string>, e.g. C<<

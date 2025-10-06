@@ -36,16 +36,16 @@ exclusive.
 Will wait for the global lock for as long as it takes, printing a message every
 few seconds to keep the user informed.
 
-=head2 Functions
+=head1 Functions
 
-=head3 with_lock BLOCK
+=head2 with_lock BLOCK
 
 Gets the lock, executes the block, releases the lock again. Returns whatever
 the block returned.
 
 Use this instead of C<get_lock> to prevent forgetting to release the lock.
 
-=head3 get_lock
+=head2 get_lock
 
 Acquires the lock if it is not already held. Keeps extra virtual locks (by
 virtue of a simple counter) if the global lock is already held by the current
@@ -53,33 +53,33 @@ process.
 
 Calling this function directly is discouraged. Use C<with_lock> instead.
 
-=head3 release_lock
+=head2 release_lock
 
 Decreases the number of virtual locks, releasing the real lock if none are
 left.
 
 Calling this function directly is discouraged. Use C<with_lock> instead.
 
-=head3 slurp($filename)
+=head2 slurp($filename)
 
 Returns the entire contents of the file. In list context, returns a list of
 lines (including the line ending).
 
-=head3 spurt($filename, @data)
+=head2 spurt($filename, @data)
 
-=head3 append($filename, @data)
+=head2 append($filename, @data)
 
 Writes to a file. No separators or delimiters are added to the provided data,
 so in general you will want to pass either the entire contents as a single
 string, or a list of lines that already have line endings.
 
-=head3 rewrite($filename, sub($line) { ...; return $line; })
+=head2 rewrite($filename, sub($line) { ...; return $line; })
 
 Rewrites the existing text file. The provided subroutine is called for each
 line, and must return everything that should be written back. The sub can
 return undef to essentially skip (remove) a line.
 
-=head2 CAVEATS
+=head1 CAVEATS
 
 =over 2
 

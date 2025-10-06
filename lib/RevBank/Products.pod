@@ -19,6 +19,8 @@ This module implements a products database, based on a text file. It supports
 additional fees, discounts, compound products, and optional metadata that can
 be read by plugins.
 
+=head1 Functions
+
 =head2 read_products
 
 The only function of this module is exported by default. It returns a reference

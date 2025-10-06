@@ -15,7 +15,7 @@ corresponds to the product_id of the matched addon.
 The tokens are stored in a file called C<statiegeld> which is not
 intended to be edited externally.
 
-=head2 User interaction
+=head1 User interaction
 
 When checking out, return deposits are removed from the cart if the user does
 not have enough tokens for the transaction.
@@ -24,7 +24,7 @@ Users can choose to delete tokens by entering the C<void> command before
 checking out. At the moment of writing, it is unclear whether this is actually
 useful for any practical use case.
 
-=head2 NTP
+=head1 NTP
 
 Tokens expire only if C<ntpdate> or systemd's C<datetimectl> says the system
 time is synchronized. Else, new tokens made will never expire and existing
