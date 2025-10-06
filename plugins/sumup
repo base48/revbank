@@ -78,7 +78,7 @@ sub passerby($self, $cart) {
         if $cart->entries('is_deposit');
 
     return REJECT, "Can't use $passerby_command on a withdraw transaction."
-        if $cart->entries('is_withdraw');
+        if $cart->entries('is_withdrawal');
 
     my $amount = -$cart->sum;
 
