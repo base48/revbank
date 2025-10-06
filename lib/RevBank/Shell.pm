@@ -43,7 +43,7 @@ sub abort {
         print "Pressing ^C again will also abort.\n";
     } else {
         print @_  unless $is_interrupt;
-        print " " unless $is_interrupt or @_ && $_[-1] =~ /\n$/;
+        print " " unless $is_interrupt or !@_ or $_[-1] =~ /\n$/;
         call_hooks "abort", $cart, \@_;
         $cart->empty;
         RevBank::FileIO::release_all_locks;
