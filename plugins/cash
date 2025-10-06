@@ -10,6 +10,13 @@
 HELP1 "cash" => "Checkout without a user account";
 
 push @RevBank::Plugin::tail::show_hidden, "-cash";
+push @RevBank::Messages::checkout_commands, sub ($cart) {
+    return if $cart->entries('is_deposit');
+    return if $cart->entries('is_withdrawal');
+    return if $cart->sum->cents > 0;  # take or deposit-ish
+
+    return 'cash';
+};
 
 sub command :Tab(cash) ($self, $cart, $command, @) {
     return NEXT if $command ne 'cash';
@@ -20,6 +27,12 @@ sub command :Tab(cash) ($self, $cart, $command, @) {
 
         return REJECT, "Can't use cash checkout on a withdraw transaction."
             if $cart->entries('is_withdrawal');
+
+        return REJECT, "Cash payouts are only supported with the 'withdraw' command."
+            if $cart->sum->cents > 0 and defined &RevBank::Plugin::withdraw::command;
+
+        return REJECT, "Cash payouts are not supported."
+            if $cart->sum->cents > 0;
 
         $cart->checkout('-cash');
     } else {

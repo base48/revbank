@@ -116,6 +116,8 @@ sub load() {
 
         register $package;
     }
+
+    call_hooks("plugins_loaded");
 }
 
 sub new($class) {

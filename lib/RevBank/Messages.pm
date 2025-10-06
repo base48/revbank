@@ -13,6 +13,7 @@ BEGIN {
 }
 
 $RevBank::balance_warning_cents = -4200;
+our @checkout_commands;
 
 sub command { return NEXT; }
 sub id { 'built in messages' }
@@ -32,10 +33,18 @@ sub hook_cart_changed($class, $cart, @) {
 
     if (not $cart->entries('refuse_checkout')) {
         my $sum  = $cart->sum;
-        my $what = $sum->cents > 0 ? "add" : $cart->entries('is_withdrawal') ? "deduct" : "pay";
-        my $dir  = $sum->cents > 0 ? "to" : "from";
+        my $what = $sum->cents > 0 ? "add" : $cart->entries('is_withdrawal') ? "withdraw" : "pay";
         my $abs  = $sum->abs;
-        say "Enter username to $what $abs $dir your account; type 'abort' to abort.";
+
+        my $commands = join "/", map {
+            /^<(.*)>$/ ? "\e[4m$1\e[0m" : "'$_'"
+        } map {
+            $_->($cart)
+        } @checkout_commands;
+
+        $commands ||= "username";  # Fallback, even though it won't work
+
+        say "Enter $commands to $what $abs; type 'abort' to abort.";
     }
 }
 

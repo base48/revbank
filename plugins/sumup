@@ -15,6 +15,14 @@ our $passerby_account = '-pin';
 our $min = RevBank::Amount->new(1_00);
 our $max = RevBank::Amount->new(150_00);
 
+push @RevBank::Messages::checkout_commands, sub ($cart) {
+    return if $cart->entries('is_deposit');
+    return if $cart->entries('is_withdrawal');
+    return if $cart->sum->cents > 0;  # take or deposit-ish
+
+    return $passerby_command;
+};
+
 my $ua = LWP::UserAgent->new(agent => "revbank");
 my $reader_id_fn = 'sumup_reader_id';
 push @RevBank::Plugin::tail::show_hidden, $passerby_account;
