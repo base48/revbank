@@ -116,19 +116,9 @@ sub checkout($self, $account) {
 
     RevBank::FileIO::with_lock {
         my $fn = "nextid";
-        my $transaction_id = eval { RevBank::FileIO::slurp($fn) };
-        my $legacy_id = 0;
 
-        if (defined $transaction_id) {
-            chomp $transaction_id;
-            if ($transaction_id eq "LEGACY") {
-                $legacy_id = 1;
-                $transaction_id = time() - 1300000000;;
-            }
-        } else {
-            warn "Could not read $fn; using timestamp as first transaction ID.\n";
-            $transaction_id = time() - 1300000000;
-        }
+        my $transaction_id = RevBank::FileIO::slurp($fn);
+        chomp $transaction_id;
 
         eval {
             RevBank::Plugins::call_hooks("checkout_prepare", $self, $account, $transaction_id)
@@ -148,7 +138,7 @@ sub checkout($self, $account) {
             $entry->account($account) if not $entry->account;
         }
 
-        RevBank::FileIO::spurt($fn, ++(my $next_id = $transaction_id)) unless $legacy_id;
+        RevBank::FileIO::spurt($fn, ++(my $next_id = $transaction_id));
 
         RevBank::Plugins::call_hooks("checkout", $self, $account, $transaction_id);
 

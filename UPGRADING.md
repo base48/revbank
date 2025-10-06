@@ -19,6 +19,14 @@ supports Perl versions down to 5.36 (2022), which is in Debian 12 "bookworm"
 and 13 "trixie" becomes the new oldstable, RevBank will begin to require Perl
 5.40 (2024).
 
+# (2025-10-06) RevBank 11.0.0
+
+Support for the deprecated (timestamp-based) transaction IDs was removed.
+
+This means that if you wrote `LEGACY` to the `nextid` file and forgot to inform
+me that you want to keep this feature, your next transaction will have the ID
+`LEGACY`, followed by `LEGACZ`, LEGADA`, `LEGADB`, and so on.
+
 # (2025-09-04) RevBank 10.6.1
 
 Minimum Perl version bumped to 5.36 (the version in Debian oldstable).
@@ -498,16 +506,14 @@ perl -lane'BEGIN { $max = time() - 1.3e9 }
 This is safe because the timestamp based IDs were huge and are unlikely to
 overlap at least the next few decades.
 
-### Option 3: keeping the legacy transaction ID scheme (for now)
+### ~~Option 3: keeping the legacy transaction ID scheme (for now)~~
 
-Finally, for those who really don't want to change the scheme now, the old
+~~Finally, for those who really don't want to change the scheme now, the old
 system can be retained by writing the special-cased value `LEGACY`. This
 feature will be supported at least until 2024-01-01, but might be removed after
-if nobody tries to convince me otherwise.
+if nobody tries to convince me otherwise.~~
 
-```sh
-echo LEGACY > .revbank.nextid
-```
+(Removed in 11.0.0)
 
 ## Update `revbank.plugins`
 
