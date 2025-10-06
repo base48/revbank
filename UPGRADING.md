@@ -21,11 +21,11 @@ and 13 "trixie" becomes the new oldstable, RevBank will begin to require Perl
 
 # (2025-10-06) RevBank 11.0.0
 
-Support for the deprecated (timestamp-based) transaction IDs was removed.
+Support for the deprecated timestamp-based transaction IDs was removed.
 
 This means that if you wrote `LEGACY` to the `nextid` file and forgot to inform
 me that you want to keep this feature, your next transaction will have the ID
-`LEGACY`, followed by `LEGACZ`, LEGADA`, `LEGADB`, and so on.
+`LEGACY`, followed by `LEGACZ`, `LEGADA`, `LEGADB`, and so on.
 
 # (2025-09-04) RevBank 10.6.1
 
