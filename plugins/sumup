@@ -93,12 +93,17 @@ sub passerby($self, $cart) {
     print "\e[7mNOTE: Deposit returns are not supported for card payments.\e[m\n"
         if List::Util::any { is_statiegeld($_) } $cart->entries('product');
 
-    $cart
+    my $entry = $cart
         ->add(+$amount, $description, { is_deposit => 1, method => $deposit_method, skip_undo_log => 1 })
         ->add_contra("-deposits/$deposit_method", -$amount, $description);
 
-
-    $cart->checkout($passerby_account);
+    eval {
+        $cart->checkout($passerby_account);
+    };
+    if ($@) {
+        $cart->delete($entry);
+        die $@;
+    }
 
     return ACCEPT;
 }
@@ -140,6 +145,11 @@ sub hook_add_entry($class, $cart, $entry, @) {
 
 sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
     ENTRY: for my $entry ($cart->entries('is_deposit')) {
+        my sub _abort_recoverably($message) {
+            $message .= "\nIf the payment terminal still prompts for a card, ignore it!";
+            die RevBank::Exception::AbortCheckoutRecoverably->new($message);
+        }
+
         $entry->attribute('method') eq $deposit_method or next;
 
         print "Follow instructions on payment terminal...\n";
@@ -152,7 +162,7 @@ sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
                 description => $sumup_description,
                 cents => $amount->cents,
             });
-        } or return ABORT, "$@" . "(If the payment terminal still prompts for a card, ignore it!)\n";
+        } or _abort_recoverably "$@";
 
         my $tid = $result->{client_transaction_id} or die "No transaction ID in API response";
 
@@ -177,6 +187,7 @@ sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
                         eval { api_call('terminate') };
                     }
                 }
+
                 return ABORT, $::ABORT_HACK;
             }
             if (time() > $max_time) {
@@ -214,10 +225,10 @@ sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
                 # Waiting for user interaction on the terminal.
                 sleep 1;
             } else {
-                return ABORT, "Payment failed, status code: $status.\n";
+                _abort_recoverably "Payment failed, status code: $status.";
             }
         }
-        return ABORT, "Payment timeout.\n";
+        die _abort_recoverably "Payment timeout.";
     }
     return;
 }

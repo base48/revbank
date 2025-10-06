@@ -130,9 +130,19 @@ sub checkout($self, $account) {
             $transaction_id = time() - 1300000000;
         }
 
-        RevBank::Plugins::call_hooks("checkout_prepare", $self, $account, $transaction_id)
+        eval {
+            RevBank::Plugins::call_hooks("checkout_prepare", $self, $account, $transaction_id)
             or die "Refusing to finalize after failed checkout_prepare";
+        };
+        if ($@ and $@ isa RevBank::Exception::AbortCheckoutRecoverably) {
+            $self->{changed}++;  # force redisplay
+            $_->account(undef) for @$entries;
+            die RevBank::Exception::RejectInput->new($@->message, 1);
+        } elsif ($@) {
+            die $@;
+        }
 
+        # checkout_prepare could have added or changed entries
         for my $entry (@$entries) {
             $entry->sanity_check;
             $entry->account($account) if not $entry->account;

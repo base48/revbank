@@ -39,7 +39,9 @@ sub call_hooks {
          if ($class->can($method)) {
             my ($rv, @message) = eval { $class->$method(@_) };
 
-            if ($@) {
+            if ($@ and $@ isa RevBank::Exception::AbortCheckoutRecoverably) {
+                die $@;
+            } elsif ($@) {
                 $success = 0;
                 call_hooks("plugin_fail", $class->id, "$class->$method died: $@");
             } elsif (defined $rv and ref $rv) {

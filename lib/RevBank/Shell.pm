@@ -15,6 +15,8 @@ use RevBank::Prompt;
 use Exporter qw(import);
 our @EXPORT_OK = qw(abort);
 
+use constant RETRY => \-1;
+
 our $interactive;
 
 my $cart = RevBank::Cart->new;
@@ -63,7 +65,7 @@ sub _shell(@args) {
     my $one_off = !!@words;
 
     OUTER: for (;;) {
-        if (not @words) {
+        if (not @words and not $retry) {
             call_hooks("cart_changed", $cart) if $cart->changed;
             print "\n";
         }
@@ -91,10 +93,11 @@ sub _shell(@args) {
 
                 if ($retry) {
                     print "$retry\n";
+                    call_hooks("cart_changed", $cart) if $cart->changed;
 
                     my $word_based = ref($retry[-1]);
                     my @trailing = $word_based ? @{ pop @retry } : ();
-                    my @rejected = pop @retry;
+                    my @rejected = @retry ? pop @retry : ();
                     my @accepted = @retry;
 
                     if ($word_based) {
@@ -189,7 +192,7 @@ sub _shell(@args) {
                         $retry = $@->reason;
                         redo OUTER;
                     } elsif ($@ isa 'RevBank::Exception::RejectInput') {
-                        $rv = REJECT;
+                        $rv = $@->retry ? RETRY : REJECT;
                         @rvargs = $@->reason;
                     } elsif ($@) {
                         call_hooks "plugin_fail", $plugin->id, "$mname$@";
@@ -234,16 +237,24 @@ sub _shell(@args) {
                     if ($rv == REJECT) {
                         my ($reason) = @rvargs;
                         if (@words) {
-                            call_hooks "retry", $plugin->id, $reason, @words ? 1 : 0;
-                            push @retry, [@words];
-                            @words = ();
-                            $retry = $reason;
-                            redo OUTER;
+                            $rv = RETRY;
                         } else {
                             call_hooks "reject", $plugin->id, $reason, @words ? 1 : 0;
                             @retry = ();
                             redo PROMPT;
                         }
+                    }
+                    if ($rv == RETRY) {
+                        my ($reason) = @rvargs;
+                        call_hooks "retry", $plugin->id, $reason, @words ? 1 : 0;
+                        if (@words) {
+                            push @retry, [@words];
+                        } else {
+                            @retry = ();  # remove current $word
+                        }
+                        @words = ();
+                        $retry = $reason;
+                        redo OUTER;
                     }
                     if ($rv == ACCEPT) {
                         call_hooks "accept", $cart, $plugin->id, @words ? 1 : 0;

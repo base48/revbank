@@ -189,14 +189,24 @@ sub as_loggable($self) {
     return @s;
 }
 
-sub account($self, $new = undef) {
-    if (defined $new) {
-        croak "User can only be set once" if defined $self->{account};
-        $new = RevBank::Accounts::assert_account($new);
+sub account($self, $new = $NONE) {
+    if (_arg_provided $new) {
+        if (defined $new) {
+            croak "User can only be set once" if defined $self->{account};
+
+            $new = RevBank::Accounts::assert_account($new);
+            for ($self, @{ $self->{contras} }) {
+                $_->{_restore_description} = $_->{description};
+                $_->{description} =~ s/\$you/$new/g;
+            }
+        } else {
+            for ($self, @{ $self->{contras} }) {
+                $_->{description} = $_->{_restore_description};
+            }
+        }
 
         $self->{account} = $new;
         $self->{user} = $new;  # backwards compatibility until 2027-05-01
-        $_->{description} =~ s/\$you/$new/g for $self, @{ $self->{contras} };
     }
 
     return $self->{account};

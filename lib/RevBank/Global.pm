@@ -6,8 +6,15 @@ use RevBank::Amount;
 use RevBank::FileIO;
 
 package RevBank::Exception::RejectInput {
-    sub new($class, $reason) { return bless \$reason, $class; }
-    sub reason($self) { return $$self; }
+    sub new($class, $reason, $retry = 0) { return bless [$reason, $retry], $class; }
+    sub reason($self) { return $self->[0]; }
+    sub retry($self)  { return $self->[1]; }
+}
+
+package RevBank::Exception::AbortCheckoutRecoverably {
+    # Only valid in hook_checkout_prepare.
+    sub new($class, $message) { return bless \$message, $class; }
+    sub message($self) { return $$self; }
 }
 
 sub import {
