@@ -2,7 +2,7 @@
 
 statiegeld - RevBank plugin for return deposits
 
-=head1 SYNOPISIS
+=head1 SYNOPSIS
 
 $REVBANK_DATADIR/products:
 
