@@ -139,7 +139,7 @@ sub unpair($self) {
 
 
 sub hook_add_entry($class, $cart, $entry, @) {
-    $entry->has_attribute('is_deposit') and $entry->attribute('method') eq $deposit_method
+    $entry->has_attribute('is_deposit') and ($entry->attribute('method') // "") eq $deposit_method
         or return;
 
     my @deposits = $cart->entries('is_deposit');
@@ -158,7 +158,7 @@ sub hook_checkout_prepare($class, $cart, $account, $transaction_id, @) {
             die RevBank::Exception::AbortCheckoutRecoverably->new($message);
         }
 
-        $entry->attribute('method') eq $deposit_method or next;
+        ($entry->attribute('method') // "") eq $deposit_method or next;
 
         print "Follow instructions on payment terminal...\n";
 
