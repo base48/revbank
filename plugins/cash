@@ -7,7 +7,7 @@
 # This plugin should be loaded *before* the 'stock' plugin in
 # the 'plugins' configuration file.
 
-HELP1 "cash" => "Checkout without a user account";
+HELP "cash" => "Verify cash box contents";
 
 push @RevBank::Plugin::tail::show_hidden, "-cash";
 push @RevBank::Messages::checkout_commands, sub ($cart) {
