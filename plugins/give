@@ -1,6 +1,6 @@
 #!perl
 
-HELP "give <account> <amount> [<reason>]" => "Transfer money to user's account";
+HELP "give <account> <amount> <reason>" => "Transfer money to user's account";
 
 sub command :Tab(give) ($self, $cart, $command, @) {
     return NEXT if $command ne 'give';
