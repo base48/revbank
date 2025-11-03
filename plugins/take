@@ -1,6 +1,6 @@
 #!perl
 
-HELP "take <account>... <amount> <reason>" => "Transfer money from them to you";
+HELP1 "take <account>... <amount> <reason>" => "Transfer money from them to you";
 
 sub command :Tab(take,steal) ($self, $cart, $command, @) {
     $command eq 'take' or $command eq 'steal'
