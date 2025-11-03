@@ -1,6 +1,6 @@
 #!perl
 
-HELP1 "withdraw <amount>" => "Withdraw from your account";
+HELP1 "withdraw <amount>" => "Withdrawal from your account (cash)";
 
 sub command :Tab(withdraw) ($self, $cart, $command, @) {
     $command eq 'withdraw' or return NEXT;
