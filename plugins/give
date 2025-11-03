@@ -5,7 +5,7 @@ HELP1 "give <account> <amount> <reason>" => "Transfer money to account";
 sub command :Tab(give) ($self, $cart, $command, @) {
     return NEXT if $command ne 'give';
 
-    return "Beneficiary", \&beneficiary;
+    return "User to give to", \&beneficiary;
 }
 
 sub beneficiary :Tab(USERS) ($self, $cart, $input, @) {
