@@ -1,6 +1,6 @@
 #!perl
 
-HELP "dinnerbonus" => "Add fee for cooking supplies";
+HELP "dinnerbonus" => "Add fee for cooking supplies (after take)";
 
 our $bonus = 1.00;
 our $target = "kookpotje";
