@@ -2,7 +2,14 @@
 
 # This plugin must at the end in the plugins file.
 
-HELP1 "deposit <amount>" => "Deposit into an account";
+sub hook_plugins_loaded(@) {
+    call_hooks("deposit_methods", \my $message, \my %hash);
+    if (keys %hash) {
+        HELP1 "deposit <amount> <method>" => "Add money to an account";
+    } else {
+        HELP1 "deposit <amount>" => "Add money to an account";
+    }
+}
 
 sub command :Tab(deposit) ($self, $cart, $command, @) {
     $command eq 'deposit' or return NEXT;
