@@ -5,43 +5,49 @@ HELP1 "help2" => "Advanced usage instructions";
 use List::Util qw(max);
 
 my $bold = "\e[1m";
+my $dim = "\e[2m";
 my $underline = "\e[4m";
 my $off = "\e[0m";
 
-sub command :Tab(help,help2,wtf,omgwtfbbq) ($self, $cart, $command, @) {
-    return NEXT if $command !~ /^(?:help2?|wtf|omgwtfbbq)$/;
-
-    my $help2 = $command =~ /help2/;
-    my $hash = $help2 ? \%::HELP : \%::HELP1;
-
-    say "\n${bold}Valid commands:${off}";
-
-    my $width = max(map length s/[<>]//rg, keys %$hash);
+sub _print_table($hide_arguments, $hash) {
+    my @output;
 
     for my $command (sort keys %$hash) {
         my $display = $command;
+        $display =~ s/ .*// if $hide_arguments;
 
         my $length = length $display =~ s/[<>]//rg;
 
         $display =~ s/</$underline/g;
         $display =~ s/>/$off/g;
 
-        # Because of markup codes, a simple %-42s doesn't work.
-        $display .= " " x ($width - $length);
-
-        say sprintf "  %s  %s", $display, $hash->{$command};
+        push @output, [ $length, $display, $hash->{$command} ];
     }
 
-    my $advanced = $help2
-        ? "${bold}Advanced usage:${off} pass space separated arguments to parameters"
-        : "";  # Line intentionally left blank
+    my $width = max(map $_->[0], @output);
+    foreach my $line (@output) {
+        my ($length, $display, $description) = @$line;
+        $display .= " " x ($width - $length);
+        say sprintf "  %s  %s", $display, $description;
+    }
+}
 
-    print <<"END";
+sub command :Tab(help,help2,wtf,omgwtfbbq) ($self, $cart, $command, @) {
+    return NEXT if $command !~ /^(?:help2?|wtf|omgwtfbbq)$/;
 
-${bold}Simple usage:  ${off} press <Enter> after a command for follow-up prompts
-$advanced
-Complete each transaction with ${underline}account${off} (i.e. enter your name).
-END
+    if ($command eq 'help2') {
+        say "\n${bold}Advanced commands: ${off} (press <Enter> or use space separated arguments)";
+        _print_table 0, { %::HELP1{ grep / /, keys %::HELP1 }, %::HELP };
+    } else {
+        say "\n${bold}Basic commands: ${off} ${dim}(press <Enter> after a command)${off}";
+        _print_table 1, \%::HELP1;
+
+        print "\n";
+        print "- Scan one or more barcodes (or type ${underline}productID${off}s) to buy products.\n"
+            if defined &RevBank::Plugin::products::command;
+        print "- Complete a transaction with ${underline}account${off} (i.e. enter your name).\n"
+            if defined &RevBank::Plugin::users::command;
+    }
 
     return ACCEPT;
 }
