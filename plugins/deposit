@@ -61,7 +61,9 @@ sub how :Tab(&how_tab) ($self, $cart, $input, @) {
         return shift @$prompts, \&how;
     }
 
-    my $desc = sprintf $$method->{description}, @{ $$method->{answers} };
+    my $desc = $$method->{answers}
+        ? sprintf($$method->{description}, @{ $$method->{answers} })
+        : $$method->{description};
 
     $cart
         ->add(+$self->{amount}, $desc, { is_deposit => 1, method => $$method->{_key} })
