@@ -42,25 +42,30 @@ sub amount :Tab(13.37,42) ($self, $cart, $input, @) {
 }
 
 sub how :Tab(&how_tab) ($self, $cart, $input, @) {
-    my %methods = %{ $self->{deposit_methods} };
+    my $method = \$self->{method};
 
-    my $how = $self->{how} = $methods{$input}
-        or return REJECT, "'$input' is not a valid answer.";
+    if (not $$method) {
+        # "How are we receiving...?"
+        $$method = $self->{deposit_methods}{$input}
+            or return REJECT, "'$input' is not a valid answer.";
 
-    $how->{_key} = $input;
-
-    if (@{ $how->{prompts} // [] }) {
-        return shift @{ $how->{prompts} }, \&how_prompt;
+        $$method->{_key} = $input;
+        $$method->{contra} ||= $input eq 'cash' ? '-cash' : "-deposits/$input";
+    } else {
+        # Follow-up prompt
+        push @{ $$method->{answers} }, $input;
     }
 
-    my $contra = 
-          $how->{_key} eq 'cash'      ? '-cash'
-        : $how->{_key} eq 'reimburse' ? '-expenses/reimbursed'
-        :                               "-deposits/$how->{_key}";
+    my $prompts = $$method->{prompts} // [];
+    if (@$prompts) {
+        return shift @$prompts, \&how;
+    }
+
+    my $desc = sprintf $$method->{description}, @{ $$method->{answers} };
 
     $cart
-        ->add(+$self->{amount}, $how->{description}, { is_deposit => 1, method => $how->{_key} })
-        ->add_contra($contra, -$self->{amount}, "$how->{description} by \$you");
+        ->add(+$self->{amount}, $desc, { is_deposit => 1, method => $$method->{_key} })
+        ->add_contra($$method->{contra}, -$self->{amount}, "$desc by \$you");
 
     return ACCEPT;
 }
@@ -69,21 +74,3 @@ sub how_tab($self, @) {
     return keys %{ $self->{deposit_methods} };
 }
 
-sub how_prompt($self, $cart, $input, @) {
-    my $how = $self->{how};
-
-    push @{ $how->{answers} }, $input;
-
-    if (@{ $how->{prompts} }) {
-        return shift @{ $how->{prompts} }, \&how_prompt;
-    }
-
-    my $desc = sprintf $how->{description}, @{ $how->{answers} };
-    my $contra = $how->{_key} eq 'cash' ? '-cash' : "-deposits/$how->{_key}";
-
-    $cart
-        ->add(+$self->{amount}, $desc, { is_deposit => 1, method => $how->{_key} })
-        ->add_contra($contra, -$self->{amount}, "$desc by \$you");
-
-    return ACCEPT;
-}

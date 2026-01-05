@@ -25,6 +25,26 @@ supports Perl versions down to 5.36 (2022), which is in Debian 12 "bookworm"
 and 13 "trixie" becomes the new oldstable, RevBank will begin to require Perl
 5.40 (2024).
 
+## (2026-01-05) RevBank 11.1.0
+
+A bug fix involves a small breaking change, which is unlikely to affect
+anyone: a feature was removed, which was probably not actually used by anyone,
+because it wasn't implemented correctly.
+
+To check whether you're affected by this change, grep `.revbank/accounts` for
+`-expenses/reimbursed`. If that account exists and you wish to keep using it,
+keep reading.
+
+The bug was that the intended hard-coded contra account `-expenses/reimbursed`
+was only used if the `deposit_methods` plugin had zero follow-up prompts for
+the `reimburse` method. It was intended to be used with all reimbursements.
+
+This version introduces a way to define a custom contra account for a deposit
+method. For example, adding `contra => "-expenses/reimbursed"` to the
+definition of the `reimburse` method in your `deposit_methods` plugin will
+basically do the same as the removed feature, but regardless of whether any
+follow-up prompts are defined.
+
 ## (2025-10-06) RevBank 11.0.0
 
 Support for the deprecated timestamp-based transaction IDs was removed.
