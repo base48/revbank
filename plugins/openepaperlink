@@ -7,7 +7,7 @@ my $hex = '[0-9A-F]';
 my $mac_regex = qr/^(?:$hex {12}|$hex {14}|$hex {16})$/x;
 
 sub _create() {
-	open my $fh, '>>', $fn;
+	open my $fh, '>>', "$ENV{REVBANK_DATADIR}/$fn";
 }
 
 sub _run(@args) {
@@ -20,7 +20,7 @@ sub _read_oepl() {
 }
 
 sub _touch() {
-	utime undef, undef, $fn;
+	utime undef, undef, "$ENV{REVBANK_DATADIR}/$fn";
 }
 
 sub command :Tab(openepaperlink) ($self, $cart, $command, @) {
