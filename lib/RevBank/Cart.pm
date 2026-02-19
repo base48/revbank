@@ -61,8 +61,7 @@ sub delete($self, $entry) {
 }
 
 sub empty($self) {
-    $self->{entries} = [];
-    $self->{changed}++;
+    %$self = (entries => [], changed => 1);
 }
 
 sub display($self, $prefix = "") {

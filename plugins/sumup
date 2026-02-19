@@ -91,8 +91,20 @@ sub passerby($self, $cart) {
     my $amount = -$cart->sum;
 
     return REJECT, "Card payouts are not supported. Enter a username instead."  if $amount->cents < 0;
-    return REJECT, "Amount is under minimum of $min." if $amount < $min;
     return REJECT, "Amount is over maximum of $max."  if $amount > $max;
+    if ($amount < $min) {
+        my $d = \($cart->{sumup_donate} //= 0);
+        if ($amount + $$d == $min) {
+            $cart
+                ->add(-$$d, "Donation")
+                ->add_contra("+donations", +$$d, "Donation by \$you");
+            $amount = $amount + $$d;
+        } else {
+            $$d = $min - $amount;
+            return REJECT, "Amount ($amount) is under minimum of $min.\n" .
+                "Add more products, or type '$passerby_command' again to donate $$d.";
+        }
+    }
 
     my $description = "Accountless payment (Card)";  # Must have "()" for transaction_code
 
