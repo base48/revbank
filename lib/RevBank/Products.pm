@@ -6,9 +6,14 @@ use RevBank::Global;
 use Exporter qw(import);
 our @EXPORT = qw(read_products);
 
+sub listjoin(@x) {
+    splice @x, $_, 0, "\0SEPARATOR" for reverse 1 .. $#x;
+    return @x;
+}
+
 # Note: the parameters are subject to change
 sub read_products($filename = "products", $default_contra = "+sales/products") {
-    state %caches;   # $filename => \%products
+    state %caches;  # $filename => \%products
     state %mtimes;  # $filename => mtime
 
     my $mtime = \$mtimes{$filename};
@@ -18,6 +23,7 @@ sub read_products($filename = "products", $default_contra = "+sales/products") {
     my %products;
     my $linenr = 0;
     my $warnings = 0;
+    my $warned = 0;  # Until 2028-03-02
 
     $$mtime = mtime $filename;
     for my $line (slurp $filename) {
@@ -31,50 +37,45 @@ sub read_products($filename = "products", $default_contra = "+sales/products") {
 
         my @split = RevBank::Prompt::split_input($line);
 
-        if (not @split or ref $split[0] or grep /\0/, @split) {
+        if (not @split or ref $split[0] or grep /\0(?!SEPARATOR)/, @split) {
             warn "Invalid value in $filename line $linenr.\n";
             next;
         }
 
-        my ($ids, $p, $desc, @extra) = @split;
+        my @ids;
+        push @ids, shift @split unless $split[0] eq "\0SEPARATOR";
+        while ($split[0] eq "\0SEPARATOR") {
+            shift @split;
+            push @ids, shift @split unless $split[0] eq "\0SEPARATOR";
+        }
+
+        if (@ids == 1 and $ids[0] =~ /,/) {
+            # Until 2028-03-02
+            $warned++ or warn "$filename still uses comma separated IDs, see UPGRADING.md\n";
+            @ids = split /,/, $ids[0];
+        }
+
+        @ids = grep length, @ids;
+
+        my ($p, $desc, @extra) = @split;
 
         my @addon_ids;
         my %tags;
 
-        my $compat = 0;  # Until 2026-01-20
-        if (@split == 1 and ref $split[0]) {
-            $compat = 1;
-        } else {
-            for (@extra) {
-                if (/^\+(.*)/) {
-                    push @addon_ids, $1;
-                } elsif (/^\#(\w+)(=(.*))?/) {
-                    $tags{$1} = $2 ? $3 : 1;
-                } else {
-                    $compat = 1;
-                    last;
-                }
+        for (@extra) {
+            if (/^\+(.*)/) {
+                push @addon_ids, $1;
+            } elsif (/^\#(\w+)(=(.*))?/) {
+                $tags{$1} = $2 ? $3 : 1;
+            } else {
+                warn "$filename line $linenr: trailing data ignored.\n";
             }
         }
-
-        if ($compat) {
-            # Until 2026-01-20
-            $warnings++;
-            warn "$filename line $linenr: can't parse as new format; assuming old format.\n" if $warnings < 4;
-            warn "Too many warnings; suppressing the rest. See UPGRADING.md for instructions.\n" if $warnings == 4;
-
-            ($ids, $p, $desc) = split " ", $line, 3;
-
-            @addon_ids = ();
-            unshift @addon_ids, $1 while $desc =~ s/\s+ \+ (\S+)$//x;
-        }
-
-        my @ids = split /,/, $ids;
 
         $p //= 0;
         $desc ||= "(no description)";
 
-        my $canonical = join " ", map RevBank::Prompt::reconstruct($_), $ids, $p, $desc, @extra;
+        my $canonical = join " ", map RevBank::Prompt::reconstruct($_), listjoin(@ids), $p, $desc, @extra;
 
         my ($price, $contra) = split /\@/, $p, 2;
 

@@ -8,7 +8,7 @@ RevBank::Products - Product list
 	# Empty lines are ignored.
 
 	8710447032756          0.80        "Festini Peer"
-	4029764001807,clubmate 1.40        "Club-Mate" +pf +half
+	4029764001807;clubmate 1.40        "Club-Mate" +pf +half
 	pf                     0.15@+pfand "Pfand NRW-Flasche" #OPAQUE
 	+half                  -50%        "50% discount \\o/"
 	123                    0.42        "Hashtag example" #tag #tag2=42
@@ -43,11 +43,16 @@ Data lines have whitespace-separated columns:
 
 =head2 Product ids
 
-One or more product ids, separated by commas (no whitespace before or after the
-commas). There is no way to have a comma or whitespace in a product id, but
-every other printable character is valid.
+One or more product ids, separated by semicolons. The first product id on the
+line is considered canonical, the rest are aliases.
 
-The first product id on the line is considered canonical, the rest are aliases.
+There may be whitespace around the semicolons, and product IDs may be quoted.
+
+The following three examples are the same:
+
+	primary_id;alias1;alias2       0.42  "Example"
+	primary_id ; alias1 ; alias2   0.42  "Example"
+	"primary_id"; alias1; alias2   0.42  "Example"
 
 Note: if a product id is the same as another RevBank command (e.g. a username),
 the first plugin that accepts the command will "win"; the precedence order is
@@ -56,6 +61,17 @@ id appears multiple times within C<products>, the I<last> one is used.
 
 Product ids that begin with C<+> can only be used as addons. When entered as
 user input, it will be ignored by the C<products> plugin.
+
+I<In older RevBank versions, the product IDs were separated by commas with no
+whitespace surrounding them. This will continue to be supported until early
+2028 but prints a warning. In the meantime, to have a primary ID with a literal
+comma in it, you can prefix it with a semicolon to force the new parsing (the
+empty product ID before the semicolon is ignored).>
+
+It is technically possible to include a semicolon or whitespace in a product
+ID, by quoting or escaping (e.g. C<\;>), but the user would also have to use
+quotes or escapes to enter these, so it's not readily barcode scanner
+compatible.
 
 =head2 Price
 

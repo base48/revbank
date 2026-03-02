@@ -27,9 +27,9 @@ populier5mm              3.15   "Populier-timmerplaat 600x400x5"
 hardboard3mm             0.65   "Hardboard 600x400x3"
 
 # Aliases:
-8710447032756,Perenijsje 0.80   "Ola Perenijsje"
-8712100340666,Raket      0.55   "Raket"
-8722700627821,Splitijsje 0.80   "Split"
+8710447032756;Perenijsje 0.80   "Ola Perenijsje"
+8712100340666;Raket      0.55   "Raket"
+8722700627821;Splitijsje 0.80   "Split"
 
 # Special "products"
 BOUNTY1       -10.00@-expenses/bounties  "Thanks for vacuuming!"

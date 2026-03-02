@@ -25,6 +25,63 @@ supports Perl versions down to 5.36 (2022), which is in Debian 12 "bookworm"
 and 13 "trixie" becomes the new oldstable, RevBank will begin to require Perl
 5.40 (2024).
 
+## (2026-03-02) RevBank 12.0.0
+
+### Removed: old products syntax
+
+As announced in 2024, support for the deprecated old format of the products
+list has been removed. See the upgrade notice for version 9.0.0 for details.
+
+### Semicolons instead of commas in product files
+
+Aliases in the product file are now `;`-separated instead of `,`-separated.
+
+#### Updating the existing products file
+
+Assuming you don't have any quoted or escaped product IDs, the following can
+automatically upgrade the file for you:
+
+```sh
+perl -i.bak -ne'my @f = split /( )/,$_,2; $f[0] =~ s/,/;/g; print @f' \
+    ~/.revbank/products
+```
+
+If you do have quoted or escaped product IDs, rewrite those lines yourself.
+
+#### Compatibility
+
+For the next 2 years, RevBank will retain compatibility with the comma
+separated product IDs. (Although it will emit a warning that points to
+these instructions.)
+
+Because of this, you still can't use a comma in a product ID without the
+following trick: add a `;` in front of the Product ID to force the new parsing.
+
+```
+# These will change meaning in 2028:
+primary,alias      0.01   "Old style: 'primary' and 'alias'"
+"primary,alias"    0.01   "Old style: 'primary' and 'alias' (same as previous)"
+
+# New syntax:
+primary;alias      0.42   "New style: 'primary' and 'alias'"
+"primary";"alias"  0.42   "New style: 'primary' and 'alias' (same as previous)"
+
+# Forcing new parsing to allow literal comma in product ID:
+;has,,commas,      1.23   "Example with a single ID that has commas"
+;"has,,commas,"    1.23   "Example with a single ID that has commas (same as previous)"
+```
+
+#### Background info
+
+Semicolons make more sense as a separator, because (unlike commas) they are
+already special in the main command line, so the user can't enter them easily
+anyway.
+
+Allowing commas in product IDs has been requested several times, but the comma
+was used for aliasing. Another requested feature was to allow whitespace around
+the separator for those who mentally interpret the file as having fixed-width
+columns instead of simple whitespace separation.
+
 ## (2026-01-05) RevBank 11.1.0
 
 A bug fix involves a small breaking change, which is unlikely to affect
