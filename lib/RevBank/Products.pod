@@ -196,12 +196,3 @@ The sum of a product's opaque prices is available via the key C<hidden_fees>.
 
 By convention, tags that affect internal semantics get uppercase names. It is
 suggested that tags used only by plugins get C<lowercase> names.
-
-=head3 Other additional fields
-
-When any field is added after the description, that does not begin with C<+> or
-C<#>, RevBank currently assumes it's the old syntax (which is not described in
-the current version of this document!), and parses it using the old semantics
-while showing a warning.
-
-This compatibility feature will be removed from a future version of RevBank.
