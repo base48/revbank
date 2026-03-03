@@ -30,6 +30,8 @@ c         0.30@+contra1 "different contra 1"
 +dd       -50%          "discount"
 +ee       -10%@+contra1 "discount on contra1"
 s         0.01          "opaque test" #OPAQUE
+;a,b      0.01          "literal comma 1"
+pri;sec ; more 0.02     "aliases"
 
 kwartje   0.25@mies     "contra is normal user"
 tagstest  0.00          "tags test" #tag1 #tag2=b #tag3=c "#tag4=has spaces"
@@ -56,6 +58,15 @@ ex "foo\\ bar aap"; $b -= 300;
 is balance("aap")->cents, $b;
 ex "'foo bar' aap"; $b -= 300;
 is balance("aap")->cents, $b;
+ex "a,b aap"; $b -= 1;
+is balance("aap")->cents, $b;
+ex "pri aap"; $b -= 2;
+is balance("aap")->cents, $b;
+ex "sec aap"; $b -= 2;
+is balance("aap")->cents, $b;
+ex "more aap"; $b -= 2;
+is balance("aap")->cents, $b;
+
 
 is balance("+sales/products")->cents, 10000 - $b;
 

@@ -43,13 +43,15 @@ sub read_products($filename = "products", $default_contra = "+sales/products") {
         }
 
         my @ids;
+        my $no_compat = 0;
         push @ids, shift @split unless $split[0] eq "\0SEPARATOR";
         while ($split[0] eq "\0SEPARATOR") {
+            $no_compat = 1;
             shift @split;
             push @ids, shift @split unless $split[0] eq "\0SEPARATOR";
         }
 
-        if (@ids == 1 and $ids[0] =~ /,/) {
+        if (@ids == 1 and $ids[0] =~ /,/ and not $no_compat) {
             # Until 2028-03-02
             $warned++ or warn "$filename still uses comma separated IDs, see UPGRADING.md\n";
             @ids = split /,/, $ids[0];
