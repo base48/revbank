@@ -5,7 +5,6 @@ sub hook_deposit_methods($class, $message, $hash, @) {
 
 Please type one of the following:
 
-'iban':      IBAN transfer (NL 69 ABNA 0431 1582 07)
 'cash':      Cash in the cash box
 'reimburse': Reimbursement of expenses agreed upon in advance
              Note: we require an invoice or receipt with this exact amount!
@@ -13,7 +12,6 @@ Please type one of the following:
 END
 
     %$hash = (
-        iban => { description => "Deposit (IBAN transfer)" },
         cash => { description => "Deposit (Cash)" },
         other => { description => "Deposit (%s)", prompts => [ "Description" ] },
         reimburse => {
