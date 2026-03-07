@@ -16,7 +16,7 @@ deduplicate  # wants to be after 'repeat'
 restart
 sighup
 sigint
-#stock
+stock
 #stuivers    # cash rounding to nearest 0.05
 #vat         # configure before using
 #warnings
@@ -26,16 +26,14 @@ window_title
 
 adduser_note
 adduser
-#cash             # cash tracking also requires deposit_methods to make sense
+cash             # cash tracking also requires deposit_methods to make sense
 deposit
 #deposit_iban_qr  # QR code display, edit/configure first! (needs qrencode(1))
-dinnerbonus
 edit
 give
 grandtotal
 help
-#skim             # cash tracking also requires deposit_methods to make sense
-split
+skim             # cash tracking also requires deposit_methods to make sense
 take
 tail
 undo
@@ -59,5 +57,5 @@ url                # matches other URLs
 # other plugins. Create new files, put them somewhere, and refer to them by
 # path (not just the filename).
 
-#~/revbank-plugins/deposit_methods
+/usr/local/bin/plugins/deposit_methods
 #./config

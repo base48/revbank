@@ -20,6 +20,8 @@ sub id { 'built in messages' }
 
 sub hook_shell {
     say "\e[0m\n\n\nWelcome to the RevBank Shell, version $::VERSION\n";
+    say "\e[0m\n\n\nTo buy something, scan an item with the barcode scanner.\n";
+
 }
 
 sub hook_plugin_fail($class, $plugin, $error, @) {
@@ -44,7 +46,8 @@ sub hook_cart_changed($class, $cart, @) {
 
         $commands ||= "username";  # Fallback, even though it won't work
 
-        say "Enter $commands to $what $abs; type 'abort' to abort.";
+        say "Enter $commands to $what $abs; type 'abort' to abort.\n";
+		say "If you do not have a memberportal account, you can use 'guest'."
     }
 }
 
