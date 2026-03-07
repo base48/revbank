@@ -20,6 +20,8 @@ sub id { 'built in messages' }
 
 sub hook_shell {
     say "\e[0m\n\n\nWelcome to the RevBank Shell, version $::VERSION\n";
+    say "\e[0m\n\n\nTo buy something, scan an item with the barcode scanner.\n";
+
 }
 
 sub hook_plugin_fail($class, $plugin, $error, @) {
