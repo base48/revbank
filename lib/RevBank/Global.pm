@@ -5,6 +5,8 @@ use POSIX qw(strftime);
 use RevBank::Amount;
 use RevBank::FileIO;
 
+$RevBank::max_amount_cents = 9_999_00;  # 9999.00 — override in config for your currency
+
 package RevBank::Exception::RejectInput {
     sub new($class, $reason, $retry = 0) { return bless [$reason, $retry], $class; }
     sub reason($self) { return $self->[0]; }
@@ -61,9 +63,10 @@ sub import {
                 "For our sanity, no negative amounts, please :)."
             );
         }
-        if ($amount->cents > 99900) {
+        if ($amount->cents > $RevBank::max_amount_cents) {
             die RevBank::Exception::RejectInput->new(
-                "That's way too much money."
+                "That's way too much money (max " .
+                RevBank::Amount->new($RevBank::max_amount_cents) . ")."
             );
         }
         return $amount;
