@@ -15,7 +15,6 @@
 # RevBank::Amount object.
 
 #$RevBank::balance_warning_cents = -1337;
-#$RevBank::max_amount_cents = 9_999_00;  # max single transaction amount (default: 9999.00)
 
 #$RevBank::Plugin::deposit_iban_qr::iban = "NL99ABCD1234567890";
 #$RevBank::Plugin::deposit_iban_qr::account_name = "Account Name";
