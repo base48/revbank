@@ -61,11 +61,11 @@ sub import {
                 "For our sanity, no negative amounts, please :)."
             );
         }
-        if ($amount->cents > 99900) {
-            die RevBank::Exception::RejectInput->new(
-                "That's way too much money."
-            );
-        }
+        #if ($amount->cents > 99900) {
+        #    die RevBank::Exception::RejectInput->new(
+        #        "That's way too much money."
+        #    );
+        #}
         return $amount;
     };
     *{"$caller\::call_hooks"} = \&RevBank::Plugins::call_hooks;
