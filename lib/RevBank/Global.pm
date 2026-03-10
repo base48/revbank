@@ -5,7 +5,6 @@ use POSIX qw(strftime);
 use RevBank::Amount;
 use RevBank::FileIO;
 
-
 package RevBank::Exception::RejectInput {
     sub new($class, $reason, $retry = 0) { return bless [$reason, $retry], $class; }
     sub reason($self) { return $self->[0]; }
