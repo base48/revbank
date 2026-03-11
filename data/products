@@ -1,26 +1,33 @@
 # Documentation: perldoc lib/RevBank/Products.pod
 
-8594014630053   20      bramborky
-3800205877325   30      bramborky brushcette
-8594002070892   10      peanuts
-50173419        15      gum
-84157089        20      rolling paper
-8594002836870   15      marilky
-8594002837235   10      easy lemon
-4820179256956   10      cheap noodles
+
+# barcode	price	name
+8594014630053   20      "bramborky"
+3800205877325   30      "bramborky brushcette"
+8594002070892   10      "peanuts"
+50173419        15      "gum"
+84157089        20      "rolling paper"
+8594002836870   15      "marilky"
+8594002837235   10      "easy lemon"
+4820179256956   10      "cheap noodles"
+85911505        15      "Fidorka bila"
 
 
 # energy drinks
-5060896621234   30      monster peach
-8586011332672   30      semtex cactus
-8595231221161   30      semtex extrem
-8595231217676   30      semtex air
+5060896621234   30      "monster peach"
+8586011332672   30      "semtex cactus"
+8595231221161   30      "semtex extrem"
+8595231217676   30      "semtex air"
+8595646202748   30      "tiger raspberry"
+8595646209884   30      "tiger zero sugar wild strawberry"
+8595646209907   30      "tiger zero sugar dragon fruit"
+
 
 # beer
-5711018021899   30      ginger beer
-8594404012698   30      radegast
-8594009924211   30      staropramen nonalco
+5711018021899   30      "ginger beer"
+8594404012698   30      "radegast"
+8594009924211   30      "staropramen nonalco"
 
 # misc
-8594001347469   30      cola 2l
-5902403940981   30      grappa 1.5l
+8594001347469   30      "cola 2l"
+5902403940981   30      "grappa 1.5l"
