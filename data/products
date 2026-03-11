@@ -1,6 +1,5 @@
 # Documentation: perldoc lib/RevBank/Products.pod
 
-
 # barcode	price	name
 8594014630053   20      "bramborky"
 3800205877325   30      "bramborky brushcette"
@@ -21,7 +20,6 @@
 8595646202748   30      "tiger raspberry"
 8595646209884   30      "tiger zero sugar wild strawberry"
 8595646209907   30      "tiger zero sugar dragon fruit"
-
 
 # beer
 5711018021899   30      "ginger beer"
